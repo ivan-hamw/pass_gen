@@ -506,7 +506,7 @@
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
                     <h3 style="margin:0">History</h3>
                     <div class="row">
-                        <button class="outline" id="btn-export-history"
+                        <button class="ou`tline" id="btn-export-history"
                             style="font-size: 0.7rem; padding: 4px 8px;">Export CSV</button>
                         <button class="outline" id="btn-clear-history"
                             style="font-size: 0.7rem; padding: 4px 8px;">Clear</button>
@@ -786,7 +786,7 @@
             "wrist", "write", "wrong", "yard", "year", "yellow", "you", "young",
             "youth", "zebra", "zero", "zone", "zoo"
         ];
-        const SYMBOLS = ["!", "?", "=", "+", "@", "#", "$", "%", "^", "&", "*", "(", ")", "/", "\\", "&lt", "&gt", ";", ":", "[", "]", "{", "}", "~"];
+        const SYMBOLS = ["!", "?", "=", "+", "@", "#", "$", "%", "^", "&", "*", "(", ")", "/", "\\", "<", ">", ";", ":", "[", "]", "{", "}", "~"];
 
         let state = {
             activeTab: 'passphrase',
@@ -957,10 +957,12 @@
             const results = [];
             for (let i = 0; i < state.pwCount; i++) {
                 const required = [];
-                if (state.pwUpper) required.push(UPPER[getSecureInt(0, UPPER.length - 1)]);
-                if (state.pwLower) required.push(LOWER[getSecureInt(0, LOWER.length - 1)]);
+                // Mandatory character types
+                required.push(UPPER[getSecureInt(0, UPPER.length - 1)]);
+                required.push(LOWER[getSecureInt(0, LOWER.length - 1)]);
+                required.push(SPEC[getSecureInt(0, SPEC.length - 1)]);
+                
                 if (state.pwDigits) required.push(DIGS[getSecureInt(0, DIGS.length - 1)]);
-                if (state.pwSymbols) required.push(SPEC[getSecureInt(0, SPEC.length - 1)]);
 
                 let pw = '';
                 const remaining = Math.max(0, state.pwLength - required.length);
@@ -1176,10 +1178,16 @@
             // Restore password tab state
             document.getElementById('opt-pw-length').value = state.pwLength;
             document.getElementById('val-pw-length').innerText = state.pwLength;
-            document.getElementById('opt-pw-upper').checked = state.pwUpper;
-            document.getElementById('opt-pw-lower').checked = state.pwLower;
+            
+            // Enforce mandatory settings in UI
+            document.getElementById('opt-pw-upper').checked = true;
+            document.getElementById('opt-pw-upper').disabled = true;
+            document.getElementById('opt-pw-lower').checked = true;
+            document.getElementById('opt-pw-lower').disabled = true;
+            document.getElementById('opt-pw-symbols').checked = true;
+            document.getElementById('opt-pw-symbols').disabled = true;
+            
             document.getElementById('opt-pw-digits').checked = state.pwDigits;
-            document.getElementById('opt-pw-symbols').checked = state.pwSymbols;
             document.getElementById('opt-pw-count').value = state.pwCount;
 
             // Restore active tab
