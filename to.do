@@ -1,1 +1,0 @@
-I do not need to hide results and history by emojis. Lets try to blure results and history  by 5px if hide results is on.

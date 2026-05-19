@@ -376,3 +376,33 @@ input[type="range"] {
     transform: translateY(-1px);
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
 }
+
+/* Strength meter */
+.strength-meter {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.strength-bar {
+    width: 22px;
+    height: 8px;
+    border-radius: 4px;
+    background: var(--border);
+    transition: background 0.3s ease;
+}
+
+/* Level colours applied via JS data-level on #strength-meter */
+#strength-meter[data-level="1"] .strength-bar:nth-child(1) { background: #ef4444; }
+
+#strength-meter[data-level="2"] .strength-bar:nth-child(1),
+#strength-meter[data-level="2"] .strength-bar:nth-child(2) { background: #f97316; }
+
+#strength-meter[data-level="3"] .strength-bar:nth-child(1),
+#strength-meter[data-level="3"] .strength-bar:nth-child(2),
+#strength-meter[data-level="3"] .strength-bar:nth-child(3) { background: #eab308; }
+
+#strength-meter[data-level="4"] .strength-bar:nth-child(1),
+#strength-meter[data-level="4"] .strength-bar:nth-child(2),
+#strength-meter[data-level="4"] .strength-bar:nth-child(3),
+#strength-meter[data-level="4"] .strength-bar:nth-child(4) { background: #22c55e; }

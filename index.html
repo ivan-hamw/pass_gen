@@ -164,7 +164,16 @@
                     passwords</button>
                 <hr>
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
-                    <h2 style="margin:0">Results</h2>
+                    <div style="display: flex; align-items: center; gap: 15px;">
+                        <h2 style="margin:0">Results</h2>
+                        <div id="strength-meter" class="strength-meter" title="Estimated strength of the first generated password" style="display: none;">
+                            <div class="strength-bar" id="str-bar-1"></div>
+                            <div class="strength-bar" id="str-bar-2"></div>
+                            <div class="strength-bar" id="str-bar-3"></div>
+                            <div class="strength-bar" id="str-bar-4"></div>
+                            <span id="str-text" style="font-size: 0.8rem; font-weight: 600; margin-left: 5px;"></span>
+                        </div>
+                    </div>
                     <div class="row">
                         <button class="secondary" id="btn-hide-results">👁️ Hide results</button>
                         <button class="secondary" id="btn-copy-all">Copy All</button>
@@ -197,7 +206,7 @@
 
     </div>
     <footer class="app-footer">
-        <span class="footer-text">Pass&Phrase Generator v.0.11 - VibeCoded by Ivan Rieznyk</span>
+        <span class="footer-text">Pass&Phrase Generator v.0.12 - VibeCoded by Ivan Rieznyk</span>
     </footer>
     <div id="toast" class="toast" aria-live="polite"></div>
 

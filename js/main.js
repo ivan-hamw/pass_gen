@@ -210,6 +210,50 @@ function generatePasswords() {
     saveState();
 }
 
+// ── Strength estimation ─────────────────────────────────────────────────────
+function estimateStrength(password) {
+    if (!password) return { level: 0, label: '' };
+
+    // Detect which pools are present in the actual string
+    const hasLower = /[a-z]/.test(password);
+    const hasUpper = /[A-Z]/.test(password);
+    const hasDigit = /[0-9]/.test(password);
+    const hasSymbol = /[^a-zA-Z0-9]/.test(password);
+
+    let pool = 0;
+    if (hasLower) pool += 26;
+    if (hasUpper) pool += 26;
+    if (hasDigit) pool += 10;
+    if (hasSymbol) pool += 32;
+    if (pool === 0) pool = 26; // fallback
+
+    const entropy = password.length * Math.log2(pool);
+    const bits = Math.round(entropy);
+
+    if (entropy < 50) return { level: 1, label: 'Weak', color: '#ef4444', bits };
+    if (entropy < 127) return { level: 2, label: 'Good', color: '#f97316', bits };
+    if (entropy < 256) return { level: 3, label: 'Strong', color: '#eab308', bits };
+    return { level: 4, label: 'Excellent', color: '#22c55e', bits };
+}
+
+function renderStrengthMeter() {
+    const meter = document.getElementById('strength-meter');
+    const text = document.getElementById('str-text');
+    if (!meter || !text) return;
+
+    if (state.results.length === 0) {
+        meter.style.display = 'none';
+        return;
+    }
+
+    const { level, label, color, bits } = estimateStrength(state.results[0]);
+    meter.setAttribute('data-level', level);
+    meter.style.display = 'flex';
+    text.textContent = `${label} · ${bits} bits`;
+    text.style.color = color;
+}
+// ────────────────────────────────────────────────────────────────────────────
+
 function generate() {
     if (state.activeTab === 'password') generatePasswords();
     else generatePassphrases();
@@ -263,6 +307,7 @@ function renderResults() {
         div.innerHTML = `<span class="${blurClass}" style="font-family: monospace; font-size: 1.1rem; width: 100%;">${p}</span>`;
         container.appendChild(div);
     });
+    renderStrengthMeter();
 }
 
 function renderHistory() {
@@ -403,12 +448,12 @@ function init() {
     if (btnHide) {
         btnHide.onclick = () => {
             state.hideResults = !state.hideResults;
-            btnHide.innerHTML = state.hideResults ? '👁️‍🗨️ Show results' : '👁️ Hide results';
+            btnHide.innerHTML = state.hideResults ? '👁️‍🗨️ Show' : '👁️ Hide';
             renderResults();
             renderHistory();
             saveState();
         };
-        btnHide.innerHTML = state.hideResults ? '👁️‍🗨️ Show results' : '👁️ Hide results';
+        btnHide.innerHTML = state.hideResults ? '👁️‍🗨️ Show' : '👁️ Hide';
     }
 
     document.getElementById('btn-copy-all').onclick = () => {
