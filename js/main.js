@@ -231,9 +231,9 @@ function estimateStrength(password) {
     const bits = Math.round(entropy);
 
     if (entropy < 50) return { level: 1, label: 'Weak', color: '#ef4444', bits };
-    if (entropy < 127) return { level: 2, label: 'Good', color: '#f97316', bits };
-    if (entropy < 256) return { level: 3, label: 'Strong', color: '#eab308', bits };
-    return { level: 4, label: 'Excellent', color: '#22c55e', bits };
+    if (entropy < 127) return { level: 2, label: 'Fair', color: '#f97316', bits };
+    if (entropy < 256) return { level: 3, label: 'Good', color: '#eab308', bits };
+    return { level: 4, label: 'Strong', color: '#22c55e', bits };
 }
 
 function renderStrengthMeter() {
