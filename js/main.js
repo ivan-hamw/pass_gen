@@ -251,10 +251,10 @@ function renderResults() {
     state.results.forEach(p => {
         const div = document.createElement('div');
         div.className = 'passphrase-item';
-        div.innerHTML = `
-            <span style="font-family: monospace; font-size: 1.1rem;">${p}</span>
-            <button class="outline" onclick="copyToClipboard('${p.replace(/'/g, "\\'").replace(/\\/g, "\\\\")}')">Copy</button>
-        `;
+        div.title = 'Click to copy';
+        div.style.cursor = 'pointer';
+        div.onclick = () => copyToClipboard(p);
+        div.innerHTML = `<span style="font-family: monospace; font-size: 1.1rem; width: 100%;">${p}</span>`;
         container.appendChild(div);
     });
 }
@@ -265,9 +265,12 @@ function renderHistory() {
     state.history.forEach(item => {
         const div = document.createElement('div');
         div.className = 'history-item';
+        div.title = 'Click to copy';
+        div.style.cursor = 'pointer';
+        div.onclick = () => copyToClipboard(item.phrase);
         div.innerHTML = `
             <span style="color: var(--secondary);">${item.timestamp}</span>
-            <span style="font-weight: 500;">${item.phrase}</span>
+            <span style="font-weight: 500; font-family: monospace;">${item.phrase}</span>
         `;
         container.appendChild(div);
     });
@@ -285,6 +288,22 @@ function applyTheme() {
     let theme = state.theme;
     if (theme === 'system') theme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
     document.documentElement.setAttribute('data-theme', theme);
+    
+    // Update button text
+    const btn = document.getElementById('themeToggle');
+    if (btn) {
+        if (state.theme === 'system') btn.innerText = '🌓 System';
+        else if (state.theme === 'dark') btn.innerText = '🌙 Dark';
+        else btn.innerText = '☀️ Light';
+    }
+}
+
+function cycleTheme() {
+    if (state.theme === 'system') state.theme = 'dark';
+    else if (state.theme === 'dark') state.theme = 'light';
+    else state.theme = 'system';
+    applyTheme();
+    saveState();
 }
 
 function init() {
@@ -314,7 +333,6 @@ function init() {
     document.getElementById('num-digitalaizer-wrap').classList.toggle('hidden', state.digitalaizer === 'off');
     setVal('opt-symbol-pos', state.symbolPos);
     setVal('opt-count', state.count);
-    setVal('themeSelect', state.theme);
 
     document.querySelectorAll(`input[name="cap"][value="${state.cap}"]`).forEach(el => el.checked = true);
 
@@ -374,11 +392,7 @@ function init() {
     document.getElementById('opt-pw-count').oninput = (e) => {
         state.pwCount = Math.max(1, parseInt(e.target.value) || 1);
     };
-    document.getElementById('themeSelect').onchange = (e) => {
-        state.theme = e.target.value;
-        applyTheme();
-        saveState();
-    };
+    document.getElementById('themeToggle').onclick = cycleTheme;
 
     document.getElementById('btn-generate').onclick = generate;
     document.getElementById('btn-copy-all').onclick = () => {

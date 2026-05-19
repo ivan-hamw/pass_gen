@@ -12,6 +12,7 @@
 </head>
 
 <body>
+    <button id="themeToggle" class="theme-toggle" aria-label="Toggle Theme">🌓 System</button>
 
     <div class="container">
         <aside>
@@ -57,7 +58,7 @@
                             <input type="radio" name="cap" id="cap-title" value="title" checked>
                             <label for="cap-title">Title</label>
                             <input type="radio" name="cap" id="cap-upper" value="upper">
-                            <label for="cap-upper">ALL</label>
+                            <label for="cap-upper">CAPS</label>
                             <input type="radio" name="cap" id="cap-random" value="random">
                             <label for="cap-random">rAndOm</label>
                         </div>
@@ -192,17 +193,11 @@
                 <div id="history-list"></div>
             </section>
         </main>
-        Pass&Phrase Generator v.0.8 - VibeCoded by Ivan Rieznyk
-        <div class="row">
-            <select id="themeSelect" aria-label="Toggle Theme">
-                <option value="system">System</option>
-                <option value="light">Light</option>
-                <option value="dark">Dark</option>
-            </select>
-        </div>
 
     </div>
-
+    <footer class="app-footer">
+        <span class="footer-text">Pass&Phrase Generator v.0.9 - VibeCoded by Ivan Rieznyk</span>
+    </footer>
     <div id="toast" class="toast" aria-live="polite"></div>
 
     <script src="js/words.js"></script>
