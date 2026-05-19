@@ -1,0 +1,323 @@
+:root {
+    --bg: #ffffff;
+    --text: #1a1a1a;
+    --primary: #2563eb;
+    --secondary: #64748b;
+    --border: #e2e8f0;
+    --card-bg: #f8fafc;
+    --toast-bg: #1e293b;
+    --toast-text: #ffffff;
+}
+
+[data-theme="dark"] {
+    --bg: #0f172a;
+    --text: #f1f5f9;
+    --primary: #3b82f6;
+    --secondary: #94a3b8;
+    --border: #334155;
+    --card-bg: #1e293b;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    font-family: system-ui, -apple-system, sans-serif;
+    background-color: var(--bg);
+    color: var(--text);
+    margin: 0;
+    line-height: 1.5;
+    transition: background-color 0.3s, color 0.3s;
+}
+
+.container {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 20px;
+    display: grid;
+    grid-template-columns: 350px 1fr;
+    gap: 24px;
+}
+
+@media (max-width: 850px) {
+    .container {
+        grid-template-columns: 1fr;
+    }
+}
+
+header {
+    grid-column: 1 / -1;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 2px solid var(--border);
+    padding-bottom: 1rem;
+}
+
+section {
+    background: var(--card-bg);
+    padding: 20px;
+    border-radius: 12px;
+    border: 1px solid var(--border);
+}
+
+.controls-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.control-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+label {
+    font-weight: 600;
+    font-size: 0.9rem;
+}
+
+.row {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+input[type="text"],
+select {
+    padding: 8px;
+    border-radius: 6px;
+    border: 1px solid var(--border);
+    background: var(--bg);
+    color: var(--text);
+}
+
+button {
+    cursor: pointer;
+    padding: 10px 16px;
+    border-radius: 6px;
+    border: none;
+    background: var(--primary);
+    color: white;
+    font-weight: 600;
+    transition: opacity 0.2s;
+}
+
+button:hover {
+    opacity: 0.9;
+}
+
+button.secondary {
+    background: var(--secondary);
+}
+
+button.outline {
+    background: transparent;
+    border: 1px solid var(--primary);
+    color: var(--primary);
+}
+
+.results-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.passphrase-item {
+    background: var(--bg);
+    padding: 12px;
+    margin-bottom: 10px;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    word-break: break-all;
+}
+
+.history-pane {
+    margin-top: 24px;
+    max-height: 300px;
+    overflow-y: auto;
+    font-size: 0.85rem;
+}
+
+.history-item {
+    padding: 6px 0;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    justify-content: space-between;
+}
+
+.toast {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background: var(--toast-bg);
+    color: var(--toast-text);
+    padding: 12px 24px;
+    border-radius: 8px;
+    transform: translateY(100px);
+    transition: transform 0.3s;
+    z-index: 1000;
+}
+
+.toast.show {
+    transform: translateY(0);
+}
+
+.hidden {
+    display: none;
+}
+
+.flex-wrap {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+}
+
+/* 1. Layout the group */
+.radio-row {
+    display: flex;
+    flex-flow: row nowrap;
+    gap: 0;
+    /* No gap for connected buttons */
+}
+
+/* 2. Hide the actual radio circle */
+.radio-row input[type="radio"] {
+    display: none;
+}
+
+/* 3. Style the labels to look like buttons */
+.radio-row label {
+    cursor: pointer;
+    padding: 10px 20px;
+    background-color: var(--bg);
+    border: 1px solid #ccc;
+    border-right: none;
+    /* Prevent double borders */
+    font-family: sans-serif;
+    font-size: 14px;
+    transition: background-color 0.2s;
+    user-select: none;
+    /* Prevents text highlighting */
+}
+
+/* 4. Add borders back to the last item and round the corners */
+.radio-row label:first-of-type {
+    border-top-left-radius: 5px;
+    border-bottom-left-radius: 5px;
+}
+
+.radio-row label:last-of-type {
+    border-right: 1px solid #ccc;
+    border-top-right-radius: 5px;
+    border-bottom-right-radius: 5px;
+}
+
+/* 5. The "Active/Checked" State */
+.radio-row input[type="radio"]:checked+label {
+    background-color: var(--primary);
+    /* Blue active color */
+    color: white;
+    border-color: var(--secondary);
+}
+
+/* Optional: Hover effect */
+.radio-row label:hover {
+    background-color: var(--card-bg);
+}
+
+.radio-row input[type="radio"]:checked+label:hover {
+    background-color: #0069d9;
+}
+
+/* Style for the main label above */
+.group-title {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: bold;
+}
+
+/* Tab navigation */
+.tab-nav {
+    display: flex;
+    gap: 0;
+    margin-bottom: 16px;
+    border-bottom: 2px solid var(--border);
+}
+
+.tab-nav button {
+    flex: 1;
+    padding: 10px 16px;
+    background: transparent;
+    color: var(--secondary);
+    border: none;
+    border-bottom: 2px solid transparent;
+    margin-bottom: -2px;
+    font-weight: 600;
+    font-size: 0.95rem;
+    cursor: pointer;
+    transition: color 0.2s, border-color 0.2s;
+}
+
+.tab-nav button.active {
+    color: var(--primary);
+    border-bottom-color: var(--primary);
+}
+
+.tab-nav button:hover:not(.active) {
+    color: var(--text);
+}
+
+.tab-content {
+    display: none;
+}
+
+.tab-content.active {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+/* Number input for count */
+input[type="number"] {
+    padding: 8px;
+    border-radius: 6px;
+    border: 1px solid var(--border);
+    background: var(--bg);
+    color: var(--text);
+    width: 80px;
+    font-size: 0.95rem;
+}
+
+input[type="number"]:focus {
+    outline: 2px solid var(--primary);
+    outline-offset: -1px;
+}
+
+/* Checkbox row */
+.checkbox-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.checkbox-row input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+    accent-color: var(--primary);
+    cursor: pointer;
+}
+
+.checkbox-row label {
+    font-weight: 500;
+    cursor: pointer;
+}
+
+input[type="range"] {
+    width: 100%;
+}
