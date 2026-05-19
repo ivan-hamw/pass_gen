@@ -11,7 +11,8 @@ let state = {
     digits: 2,
     symbolPos: 'off',
     count: 5,
-    theme: 'system',
+    theme: window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light',
+    hideResults: false,
     results: [],
     history: [],
     digitalaizer: 'off',
@@ -37,7 +38,10 @@ function saveState() {
 
 function loadState() {
     const saved = localStorage.getItem('passgen_state_v2');
-    if (saved) Object.assign(state, JSON.parse(saved));
+    if (saved) {
+        Object.assign(state, JSON.parse(saved));
+        if (state.theme === 'system') state.theme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    }
     // Only restore history if saving is enabled
     if (state.saveHistory) {
         const savedHistory = localStorage.getItem('passgen_history');
@@ -245,6 +249,27 @@ function exportCSV(filename, headers, dataRows) {
     showToast(`Exported ${filename}`);
 }
 
+function getEmojiMask(length) {
+    const emojis =
+        ['😀', '🚀', '🍍', '🌈', '🎸', '🦊', '🍕', '🎡', '💎', '🌊',
+            '🍄', '🏀', '🦄', '🌮', '🛸', '🎈', '🌵', '🍣', '🌋', '🛹',
+            '🍦', '🦁', '🎭', '🥨', '🧩', '🌻', '🚁', '🍩', '🧤', '🦦',
+            '🥥', '🥊', '🐉', '🍔', '🎨', '🧶', '🥨', '🌋', '🦜', '⛺',
+            '🧊', '🦩', '🥞', '🛸', '🍀', '🚲', '🍿', '🧸', '🦓', '🥭',
+            '🎳', '🧤', '🦀', '🍭', '🚜', '🦉', '🥓', '🧿', '🦢', '🥐',
+            '🛶', '🍋', '🦔', '🥨', '🪂', '🍓', '🧱', '🐙', '🥪', '🚖',
+            '🥐', '🐋', '🥨', '🦒', '🍒', '🛩️', '🍜', '🦋', '🚜', '🥨',
+            '🥦', '🛹', '🦚', '🥟', '🔋', '🐨', '🍯', '🛰️', '🍤', '🛸',
+            '🧁', '🐢', '🥯', '🚠', '🎐', '🐘', '🍢', '🪕', '🥝', '🛸'];
+
+    let mask = '';
+    const numEmojis = Math.max(3, Math.floor(length / 2));
+    for (let i = 0; i < numEmojis; i++) {
+        mask += emojis[getSecureInt(0, emojis.length - 1)];
+    }
+    return mask;
+}
+
 function renderResults() {
     const container = document.getElementById('results-container');
     container.innerHTML = '';
@@ -254,7 +279,9 @@ function renderResults() {
         div.title = 'Click to copy';
         div.style.cursor = 'pointer';
         div.onclick = () => copyToClipboard(p);
-        div.innerHTML = `<span style="font-family: monospace; font-size: 1.1rem; width: 100%;">${p}</span>`;
+
+        let displayStr = state.hideResults ? getEmojiMask(p.length) : p;
+        div.innerHTML = `<span style="font-family: monospace; font-size: 1.1rem; width: 100%;">${displayStr}</span>`;
         container.appendChild(div);
     });
 }
@@ -268,9 +295,11 @@ function renderHistory() {
         div.title = 'Click to copy';
         div.style.cursor = 'pointer';
         div.onclick = () => copyToClipboard(item.phrase);
+
+        let displayStr = state.hideResults ? getEmojiMask(item.phrase.length) : item.phrase;
         div.innerHTML = `
             <span style="color: var(--secondary);">${item.timestamp}</span>
-            <span style="font-weight: 500; font-family: monospace;">${item.phrase}</span>
+            <span style="font-weight: 500; font-family: monospace;">${displayStr}</span>
         `;
         container.appendChild(div);
     });
@@ -285,23 +314,18 @@ function showToast(msg, isError = false) {
 }
 
 function applyTheme() {
-    let theme = state.theme;
-    if (theme === 'system') theme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
-    document.documentElement.setAttribute('data-theme', theme);
-    
+    if (state.theme === 'system') state.theme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    document.documentElement.setAttribute('data-theme', state.theme);
+
     // Update button text
     const btn = document.getElementById('themeToggle');
     if (btn) {
-        if (state.theme === 'system') btn.innerText = '🌓 System';
-        else if (state.theme === 'dark') btn.innerText = '🌙 Dark';
-        else btn.innerText = '☀️ Light';
+        btn.innerText = state.theme === 'dark' ? '🌙 Dark' : '☀️ Light';
     }
 }
 
 function cycleTheme() {
-    if (state.theme === 'system') state.theme = 'dark';
-    else if (state.theme === 'dark') state.theme = 'light';
-    else state.theme = 'system';
+    state.theme = state.theme === 'dark' ? 'light' : 'dark';
     applyTheme();
     saveState();
 }
@@ -395,6 +419,19 @@ function init() {
     document.getElementById('themeToggle').onclick = cycleTheme;
 
     document.getElementById('btn-generate').onclick = generate;
+
+    const btnHide = document.getElementById('btn-hide-results');
+    if (btnHide) {
+        btnHide.onclick = () => {
+            state.hideResults = !state.hideResults;
+            btnHide.innerHTML = state.hideResults ? '👁️‍🗨️ Show results' : '👁️ Hide results';
+            renderResults();
+            renderHistory();
+            saveState();
+        };
+        btnHide.innerHTML = state.hideResults ? '👁️‍🗨️ Show results' : '👁️ Hide results';
+    }
+
     document.getElementById('btn-copy-all').onclick = () => {
         if (state.results.length === 0) return;
         copyToClipboard(state.results.join('\n'));

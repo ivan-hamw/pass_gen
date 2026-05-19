@@ -12,7 +12,7 @@
 </head>
 
 <body>
-    <button id="themeToggle" class="theme-toggle" aria-label="Toggle Theme">🌓 System</button>
+    <button id="themeToggle" class="theme-toggle" aria-label="Toggle Theme">🌙 Dark</button>
 
     <div class="container">
         <aside>
@@ -166,6 +166,7 @@
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
                     <h2 style="margin:0">Results</h2>
                     <div class="row">
+                        <button class="secondary" id="btn-hide-results">👁️ Hide results</button>
                         <button class="secondary" id="btn-copy-all">Copy All</button>
                         <button class="secondary" id="btn-export-results">Export CSV</button>
                     </div>
@@ -181,7 +182,7 @@
                         <input type="checkbox" id="opt-save-history"
                             style="width:15px;height:15px;accent-color:var(--primary);cursor:pointer;"
                             title="Save history for next start">
-                        <h3 style="margin:0">History</h3>
+                        <h3 style="margin:0">Your Local History</h3>
                     </div>
                     <div class="row">
                         <button class="ou`tline" id="btn-export-history"
@@ -196,7 +197,7 @@
 
     </div>
     <footer class="app-footer">
-        <span class="footer-text">Pass&Phrase Generator v.0.9 - VibeCoded by Ivan Rieznyk</span>
+        <span class="footer-text">Pass&Phrase Generator v.0.11 - VibeCoded by Ivan Rieznyk</span>
     </footer>
     <div id="toast" class="toast" aria-live="polite"></div>
 
