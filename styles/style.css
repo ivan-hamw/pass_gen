@@ -135,6 +135,7 @@ button.outline {
     justify-content: space-between;
     align-items: center;
     word-break: break-all;
+
 }
 
 .history-pane {
@@ -339,6 +340,16 @@ input[type="range"] {
     text-align: center;
 }
 
+.blurred-text {
+    filter: blur(6px);
+    /* transition: filter 0.3s ease; */
+}
+
+.unblurred-text {
+    filter: blur(0px);
+    /* transition: filter 0.3s ease; */
+}
+
 /* Theme Toggle Button */
 .theme-toggle {
     position: fixed;
@@ -353,8 +364,8 @@ input[type="range"] {
     border-radius: 8px;
     cursor: pointer;
     color: var(--text);
-    transition: all 0.2s ease;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    /* transition: all 0.2s ease; */
+    /* box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); */
     display: flex;
     align-items: center;
     gap: 6px;

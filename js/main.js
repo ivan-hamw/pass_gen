@@ -249,27 +249,6 @@ function exportCSV(filename, headers, dataRows) {
     showToast(`Exported ${filename}`);
 }
 
-function getEmojiMask(length) {
-    const emojis =
-        ['😀', '🚀', '🍍', '🌈', '🎸', '🦊', '🍕', '🎡', '💎', '🌊',
-            '🍄', '🏀', '🦄', '🌮', '🛸', '🎈', '🌵', '🍣', '🌋', '🛹',
-            '🍦', '🦁', '🎭', '🥨', '🧩', '🌻', '🚁', '🍩', '🧤', '🦦',
-            '🥥', '🥊', '🐉', '🍔', '🎨', '🧶', '🥨', '🌋', '🦜', '⛺',
-            '🧊', '🦩', '🥞', '🛸', '🍀', '🚲', '🍿', '🧸', '🦓', '🥭',
-            '🎳', '🧤', '🦀', '🍭', '🚜', '🦉', '🥓', '🧿', '🦢', '🥐',
-            '🛶', '🍋', '🦔', '🥨', '🪂', '🍓', '🧱', '🐙', '🥪', '🚖',
-            '🥐', '🐋', '🥨', '🦒', '🍒', '🛩️', '🍜', '🦋', '🚜', '🥨',
-            '🥦', '🛹', '🦚', '🥟', '🔋', '🐨', '🍯', '🛰️', '🍤', '🛸',
-            '🧁', '🐢', '🥯', '🚠', '🎐', '🐘', '🍢', '🪕', '🥝', '🛸'];
-
-    let mask = '';
-    const numEmojis = Math.max(3, Math.floor(length / 2));
-    for (let i = 0; i < numEmojis; i++) {
-        mask += emojis[getSecureInt(0, emojis.length - 1)];
-    }
-    return mask;
-}
-
 function renderResults() {
     const container = document.getElementById('results-container');
     container.innerHTML = '';
@@ -280,8 +259,8 @@ function renderResults() {
         div.style.cursor = 'pointer';
         div.onclick = () => copyToClipboard(p);
 
-        let displayStr = state.hideResults ? getEmojiMask(p.length) : p;
-        div.innerHTML = `<span style="font-family: monospace; font-size: 1.1rem; width: 100%;">${displayStr}</span>`;
+        const blurClass = state.hideResults ? 'blurred-text' : 'unblurred-text';
+        div.innerHTML = `<span class="${blurClass}" style="font-family: monospace; font-size: 1.1rem; width: 100%;">${p}</span>`;
         container.appendChild(div);
     });
 }
@@ -296,10 +275,10 @@ function renderHistory() {
         div.style.cursor = 'pointer';
         div.onclick = () => copyToClipboard(item.phrase);
 
-        let displayStr = state.hideResults ? getEmojiMask(item.phrase.length) : item.phrase;
+        const blurClass = state.hideResults ? 'blurred-text' : 'unblurred-text';
         div.innerHTML = `
             <span style="color: var(--secondary);">${item.timestamp}</span>
-            <span style="font-weight: 500; font-family: monospace;">${displayStr}</span>
+            <span class="${blurClass}" style="font-weight: 500; font-family: monospace;">${item.phrase}</span>
         `;
         container.appendChild(div);
     });
