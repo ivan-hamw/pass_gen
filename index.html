@@ -12,15 +12,14 @@
 </head>
 
 <body>
-    <button id="themeToggle" class="theme-toggle" aria-label="Toggle Theme">🌙 Dark</button>
+    <button type="button" id="themeToggle" class="theme-toggle" aria-label="Toggle Theme">🌙 Dark</button>
 
     <div class="container">
         <aside>
             <section class="controls-grid">
                 <div class="tab-nav">
-                    <button id="tab-btn-passphrase" class="active" onclick="switchTab('passphrase')">🔑
-                        Passphrase</button>
-                    <button id="tab-btn-password" onclick="switchTab('password')">🔐 Password</button>
+                    <button type="button" id="tab-btn-passphrase" class="active">🔑 Passphrase</button>
+                    <button type="button" id="tab-btn-password">🔐 Password</button>
                 </div>
 
                 <!-- ===== PASSPHRASE TAB ===== -->
@@ -164,8 +163,7 @@
         <main>
 
             <section>
-                <button id="btn-generate" style="width: 100%; padding: 15px; font-size: 1.1rem;">🔐 Generate some
-                    passwords</button>
+                <button type="button" id="btn-generate" class="main-action-button">🔐 Generate some passwords</button>
                 <hr>
                 <div
                     style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; margin-bottom: 15px;">
@@ -182,9 +180,9 @@
                         </div>
                     </div>
                     <div class="row">
-                        <button class="secondary" id="btn-hide-results">👁️ Hide results</button>
-                        <button class="secondary" id="btn-copy-all">Copy All</button>
-                        <button class="secondary" id="btn-export-results">Export CSV</button>
+                        <button type="button" class="secondary" id="btn-hide-results">👁️ Hide results</button>
+                        <button type="button" class="secondary" id="btn-copy-all">Copy All</button>
+                        <button type="button" class="secondary" id="btn-export-results">Export CSV</button>
                     </div>
                 </div>
                 <div id="results-container" class="results-list"></div>
@@ -202,10 +200,8 @@
                         <h3 style="margin:0">Your Local History</h3>
                     </div>
                     <div class="row">
-                        <button class="outline" id="btn-export-history"
-                            style="font-size: 0.7rem; padding: 4px 8px;">Export CSV</button>
-                        <button class="outline" id="btn-clear-history"
-                            style="font-size: 0.7rem; padding: 4px 8px;">Clear</button>
+                        <button type="button" class="outline small-btn" id="btn-export-history">Export CSV</button>
+                        <button type="button" class="outline small-btn" id="btn-clear-history">Clear</button>
                     </div>
                 </div>
                 <div id="history-list"></div>

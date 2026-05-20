@@ -113,6 +113,42 @@ button:hover {
     opacity: 0.9;
 }
 
+button[type="button"] {
+    font: inherit;
+}
+
+.main-action-button {
+    width: 100%;
+    padding: 15px;
+    font-size: 1.1rem;
+}
+
+.small-btn {
+    font-size: 0.7rem;
+    padding: 4px 8px;
+}
+
+.toolbar-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 15px;
+}
+
+.toolbar-group {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.warning-box {
+    color: #e11d48;
+    font-size: 0.8rem;
+    margin-top: 10px;
+}
+
 button.secondary {
     background: var(--secondary);
 }
@@ -177,6 +213,15 @@ button.outline {
 
 .hidden {
     display: none;
+}
+
+.blurred-text {
+    filter: blur(4px);
+    user-select: none;
+}
+
+.unblurred-text {
+    filter: none;
 }
 
 .flex-wrap {

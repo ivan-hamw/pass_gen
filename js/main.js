@@ -2,7 +2,7 @@
 
 let state = {
     activeTab: 'passphrase',
-    wordlist: 'simple',
+    wordlist: 'any',
     words: 4,
     separator: ' ',
     customSep: '',
@@ -51,11 +51,21 @@ function loadState() {
     }
 }
 
+function escapeCsvValue(value) {
+    return `"${String(value).replace(/"/g, '""')}"`;
+}
+
 function getSecureInt(min, max) {
     const range = max - min + 1;
+    if (range <= 0) throw new RangeError('Invalid range');
+    const limit = Math.floor(0x100000000 / range) * range;
     const array = new Uint32Array(1);
-    window.crypto.getRandomValues(array);
-    return min + (array[0] % range);
+    let value;
+    do {
+        window.crypto.getRandomValues(array);
+        value = array[0];
+    } while (value >= limit);
+    return min + (value % range);
 }
 
 function getRandomDigitString(len) {
@@ -129,7 +139,7 @@ function generatePassphrases() {
     saveState();
 }
 
-function leetTransform(text, probability = 0.5, rng = Math.random) {
+function leetTransform(text, probability = 0.5, rng = () => getSecureInt(0, 9999) / 10000) {
     if (typeof text !== 'string') throw new TypeError('text must be a string');
     if (typeof probability !== 'number' || probability < 0 || probability > 1) {
         throw new RangeError('probability must be a number between 0 and 1');
@@ -190,9 +200,11 @@ function generatePasswords() {
         if (useDigits) required.push(DIGS[getSecureInt(0, DIGS.length - 1)]);
         if (useSymbols) required.push(SPEC[getSecureInt(0, SPEC.length - 1)]);
 
+        const actualLength = Math.max(state.pwLength, required.length);
+
         // Fill remaining length from the combined charset
         let pw = '';
-        const remaining = Math.max(0, state.pwLength - required.length);
+        const remaining = actualLength - required.length;
         for (let j = 0; j < remaining; j++) {
             pw += charset[getSecureInt(0, charset.length - 1)];
         }
@@ -282,7 +294,7 @@ function addToHistory(text) {
 }
 
 function exportCSV(filename, headers, dataRows) {
-    let csvContent = headers.join(",") + "\n" + dataRows.map(row => row.join(",")).join("\n");
+    const csvContent = headers.map(escapeCsvValue).join(",") + "\n" + dataRows.map(row => row.map(escapeCsvValue).join(",")).join("\n");
     const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
     const url = URL.createObjectURL(blob);
     const link = document.createElement("a");
@@ -358,8 +370,9 @@ function cycleTheme() {
 function init() {
     loadState();
 
+    const getEl = id => document.getElementById(id);
     const setVal = (id, val) => {
-        const el = document.getElementById(id);
+        const el = getEl(id);
         if (!el) return;
         if (el.type === 'range' || el.type === 'text' || el.type === 'number' || el.tagName === 'SELECT') el.value = val;
     };
@@ -385,93 +398,97 @@ function init() {
 
     document.querySelectorAll(`input[name="cap"][value="${state.cap}"]`).forEach(el => el.checked = true);
 
-    document.getElementById('opt-wordlist').onchange = (e) => state.wordlist = e.target.value;
-    document.getElementById('opt-words').oninput = (e) => {
-        state.words = parseInt(e.target.value);
-        document.getElementById('val-words').innerText = state.words;
-    };
+    getEl('opt-wordlist').addEventListener('change', (e) => state.wordlist = e.target.value);
+    getEl('opt-words').addEventListener('input', (e) => {
+        state.words = parseInt(e.target.value, 10);
+        getEl('val-words').innerText = state.words;
+    });
     document.querySelectorAll('.btn-sep').forEach(btn => {
-        btn.onclick = () => {
+        btn.addEventListener('click', () => {
             state.separator = btn.dataset.val;
             state.customSep = '';
-            document.getElementById('opt-sep-custom').value = '';
+            getEl('opt-sep-custom').value = '';
             showToast(`Separator set to "${state.separator === ' ' ? 'Space' : state.separator}"`);
-        };
+        });
     });
-    document.getElementById('opt-sep-custom').oninput = (e) => state.customSep = e.target.value;
-    document.getElementsByName('cap').forEach(el => { el.onchange = (e) => state.cap = e.target.value; });
+    getEl('opt-sep-custom').addEventListener('input', (e) => state.customSep = e.target.value);
+    document.querySelectorAll('input[name="cap"]').forEach(el => {
+        el.addEventListener('change', (e) => state.cap = e.target.value);
+    });
 
-    document.getElementById('opt-num-pos').onchange = (e) => {
+    getEl('opt-num-pos').addEventListener('change', (e) => {
         state.numPos = e.target.value;
-        document.getElementById('num-digits-wrap').classList.toggle('hidden', state.numPos === 'off');
-    };
-    document.getElementById('opt-digits').oninput = (e) => {
-        state.digits = parseInt(e.target.value);
-        document.getElementById('val-digits').innerText = state.digits;
-    };
+        getEl('num-digits-wrap').classList.toggle('hidden', state.numPos === 'off');
+    });
+    getEl('opt-digits').addEventListener('input', (e) => {
+        state.digits = parseInt(e.target.value, 10);
+        getEl('val-digits').innerText = state.digits;
+    });
 
     // digitizer
-    document.getElementById('opt-digitalaizer-pos').onchange = (e) => {
+    getEl('opt-digitalaizer-pos').addEventListener('change', (e) => {
         state.digitalaizer = e.target.value;
-        document.getElementById('num-digitalaizer-wrap').classList.toggle('hidden', state.digitalaizer === 'off');
-    };
-    document.getElementById('opt-digitalaizerRatio').oninput = (e) => {
-        state.digitalaizerRatio = parseInt(e.target.value);
-        document.getElementById('val-digitalaizer').innerText = state.digitalaizerRatio;
-    };
+        getEl('num-digitalaizer-wrap').classList.toggle('hidden', state.digitalaizer === 'off');
+    });
+    getEl('opt-digitalaizerRatio').addEventListener('input', (e) => {
+        state.digitalaizerRatio = parseInt(e.target.value, 10);
+        getEl('val-digitalaizer').innerText = state.digitalaizerRatio;
+    });
 
-    document.getElementById('opt-symbol-pos').onchange = (e) => state.symbolPos = e.target.value;
-    document.getElementById('opt-count').oninput = (e) => {
-        state.count = Math.max(1, parseInt(e.target.value) || 1);
-    };
+    getEl('opt-symbol-pos').addEventListener('change', (e) => state.symbolPos = e.target.value);
+    getEl('opt-count').addEventListener('input', (e) => {
+        state.count = Math.max(1, parseInt(e.target.value, 10) || 1);
+    });
 
     // Password tab handlers
-    document.getElementById('opt-pw-length').oninput = (e) => {
-        state.pwLength = parseInt(e.target.value);
-        document.getElementById('val-pw-length').innerText = state.pwLength;
-    };
-    document.getElementById('opt-pw-upper').onchange = (e) => state.pwUpper = e.target.checked;
-    document.getElementById('opt-pw-lower').onchange = (e) => state.pwLower = e.target.checked;
-    document.getElementById('opt-pw-digits').onchange = (e) => state.pwDigits = e.target.checked;
-    document.getElementById('opt-pw-symbols').onchange = (e) => state.pwSymbols = e.target.checked;
-    document.getElementById('opt-save-history').onchange = (e) => {
+    getEl('opt-pw-length').addEventListener('input', (e) => {
+        state.pwLength = parseInt(e.target.value, 10);
+        getEl('val-pw-length').innerText = state.pwLength;
+    });
+    getEl('opt-pw-upper').addEventListener('change', (e) => state.pwUpper = e.target.checked);
+    getEl('opt-pw-lower').addEventListener('change', (e) => state.pwLower = e.target.checked);
+    getEl('opt-pw-digits').addEventListener('change', (e) => state.pwDigits = e.target.checked);
+    getEl('opt-pw-symbols').addEventListener('change', (e) => state.pwSymbols = e.target.checked);
+    getEl('opt-save-history').addEventListener('change', (e) => {
         state.saveHistory = e.target.checked;
         saveState();
-    };
-    document.getElementById('opt-pw-count').oninput = (e) => {
-        state.pwCount = Math.max(1, parseInt(e.target.value) || 1);
-    };
-    document.getElementById('themeToggle').onclick = cycleTheme;
+    });
+    getEl('opt-pw-count').addEventListener('input', (e) => {
+        state.pwCount = Math.max(1, parseInt(e.target.value, 10) || 1);
+    });
+    getEl('themeToggle').addEventListener('click', cycleTheme);
 
-    document.getElementById('btn-generate').onclick = generate;
+    getEl('btn-generate').addEventListener('click', generate);
+    getEl('tab-btn-passphrase').addEventListener('click', () => switchTab('passphrase'));
+    getEl('tab-btn-password').addEventListener('click', () => switchTab('password'));
 
     const btnHide = document.getElementById('btn-hide-results');
     if (btnHide) {
-        btnHide.onclick = () => {
+        btnHide.addEventListener('click', () => {
             state.hideResults = !state.hideResults;
-            btnHide.innerHTML = state.hideResults ? '👁️‍🗨️ Show' : '👁️ Hide';
+            btnHide.innerText = state.hideResults ? '👁️‍🗨️ Show' : '👁️ Hide';
             renderResults();
             renderHistory();
             saveState();
-        };
-        btnHide.innerHTML = state.hideResults ? '👁️‍🗨️ Show' : '👁️ Hide';
+        });
+        btnHide.innerText = state.hideResults ? '👁️‍🗨️ Show' : '👁️ Hide';
     }
 
-    document.getElementById('btn-copy-all').onclick = () => {
+    getEl('btn-copy-all').addEventListener('click', () => {
         if (state.results.length === 0) return;
         copyToClipboard(state.results.join('\n'));
-    };
-    document.getElementById('btn-clear-history').onclick = () => {
+    });
+    getEl('btn-clear-history').addEventListener('click', () => {
         state.history = [];
         renderHistory();
         saveState();
-    };
-    document.getElementById('btn-export-results').onclick = () => {
+    });
+    getEl('btn-export-results').addEventListener('click', () => {
         exportCSV("passphrase_results.csv", ["passphrase"], state.results.map(r => [r]));
-    };
-    document.getElementById('btn-export-history').onclick = () => {
+    });
+    getEl('btn-export-history').addEventListener('click', () => {
         exportCSV("passphrase_history.csv", ["timestamp", "passphrase"], state.history.map(h => [h.timestamp, h.phrase]));
-    };
+    });
 
     // Restore password tab state
     document.getElementById('opt-pw-length').value = state.pwLength;
