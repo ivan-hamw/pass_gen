@@ -26,6 +26,10 @@
                 <!-- ===== PASSPHRASE TAB ===== -->
                 <div id="tab-passphrase" class="tab-content active">
                     <div class="control-group">
+                        <p style="font-size: 0.75rem; color: var(--secondary); margin-top: 4px;">Passphrases can
+                            provide a decent level of security while being much easier to remember and
+                            use. However, if you want the maximum level of security, you should use strong passwords
+                            that include a full set of letters, numbers, and special symbols.</p>
                         <label>Wordlist</label>
                         <select id="opt-wordlist">
                             <option value="any">Any</option>
@@ -35,8 +39,8 @@
                     </div>
 
                     <div class="control-group">
-                        <label>Number of Words: <span id="val-words">4</span></label>
-                        <input type="range" id="opt-words" min="1" max="20" value="2">
+                        <label>Number of Words: <span id="val-words">3</span></label>
+                        <input type="range" id="opt-words" min="1" max="20" value="3">
                     </div>
 
                     <div class="control-group">
@@ -110,15 +114,15 @@
 
                     <div class="control-group">
                         <label>Generate Count:</label>
-                        <input type="number" id="opt-count" min="1" max="100" value="5">
+                        <input type="number" id="opt-count" min="1" max="1000" value="10">
                     </div>
                 </div>
 
                 <!-- ===== PASSWORD TAB ===== -->
                 <div id="tab-password" class="tab-content">
                     <div class="control-group">
-                        <label>Length: <span id="val-pw-length">16</span></label>
-                        <input type="range" id="opt-pw-length" min="4" max="128" value="16">
+                        <label>Length: <span id="val-pw-length">24</span></label>
+                        <input type="range" id="opt-pw-length" min="4" max="128" value="24">
                     </div>
 
                     <div class="control-group">
@@ -163,7 +167,8 @@
                 <button id="btn-generate" style="width: 100%; padding: 15px; font-size: 1.1rem;">🔐 Generate some
                     passwords</button>
                 <hr>
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div
+                    style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; margin-bottom: 15px;">
                     <div style="display: flex; align-items: center; gap: 15px;">
                         <h2 style="margin:0">Results</h2>
                         <div id="strength-meter" class="strength-meter"
@@ -172,6 +177,7 @@
                             <div class="strength-bar" id="str-bar-2"></div>
                             <div class="strength-bar" id="str-bar-3"></div>
                             <div class="strength-bar" id="str-bar-4"></div>
+                            <div class="strength-bar" id="str-bar-5"></div>
                             <span id="str-text" style="font-size: 0.8rem; font-weight: 600; margin-left: 5px;"></span>
                         </div>
                     </div>
@@ -187,7 +193,8 @@
             </section>
 
             <section class="history-pane">
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                <div
+                    style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; margin-bottom: 10px;">
                     <div style="display: flex; align-items: center; gap: 6px;">
                         <input type="checkbox" id="opt-save-history"
                             style="width:15px;height:15px;accent-color:var(--primary);cursor:pointer;"
@@ -195,7 +202,7 @@
                         <h3 style="margin:0">Your Local History</h3>
                     </div>
                     <div class="row">
-                        <button class="ou`tline" id="btn-export-history"
+                        <button class="outline" id="btn-export-history"
                             style="font-size: 0.7rem; padding: 4px 8px;">Export CSV</button>
                         <button class="outline" id="btn-clear-history"
                             style="font-size: 0.7rem; padding: 4px 8px;">Clear</button>
@@ -211,7 +218,7 @@
     </footer>
     <div id="toast" class="toast" aria-live="polite"></div>
 
-    <script src="js/words.js"></script>
+    <script src="js/mydict.js"></script>
     <script src="js/main.js"></script>
 
 </body>

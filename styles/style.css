@@ -46,6 +46,10 @@ body {
     }
 }
 
+main {
+    min-width: 0;
+}
+
 header {
     grid-column: 1 / -1;
     display: flex;
@@ -65,7 +69,7 @@ section {
 .controls-grid {
     display: flex;
     flex-direction: column;
-    gap: 16px;
+    /* gap: 16px; */
 }
 
 .control-group {
@@ -150,6 +154,8 @@ button.outline {
     border-bottom: 1px solid var(--border);
     display: flex;
     justify-content: space-between;
+    gap: 12px;
+    word-break: break-all;
 }
 
 .toast {
@@ -247,7 +253,7 @@ button.outline {
 .tab-nav {
     display: flex;
     gap: 0;
-    margin-bottom: 16px;
+    /* margin-bottom: 16px; */
     border-bottom: 2px solid var(--border);
 }
 
@@ -385,7 +391,7 @@ input[type="range"] {
 }
 
 .strength-bar {
-    width: 22px;
+    width: 15px;
     height: 8px;
     border-radius: 4px;
     background: var(--border);
@@ -393,16 +399,32 @@ input[type="range"] {
 }
 
 /* Level colours applied via JS data-level on #strength-meter */
-#strength-meter[data-level="1"] .strength-bar:nth-child(1) { background: #ef4444; }
+#strength-meter[data-level="1"] .strength-bar:nth-child(1) {
+    background: #ef4444;
+}
 
 #strength-meter[data-level="2"] .strength-bar:nth-child(1),
-#strength-meter[data-level="2"] .strength-bar:nth-child(2) { background: #f97316; }
+#strength-meter[data-level="2"] .strength-bar:nth-child(2) {
+    background: #f97316;
+}
 
 #strength-meter[data-level="3"] .strength-bar:nth-child(1),
 #strength-meter[data-level="3"] .strength-bar:nth-child(2),
-#strength-meter[data-level="3"] .strength-bar:nth-child(3) { background: #eab308; }
+#strength-meter[data-level="3"] .strength-bar:nth-child(3) {
+    background: #eab308;
+}
 
 #strength-meter[data-level="4"] .strength-bar:nth-child(1),
 #strength-meter[data-level="4"] .strength-bar:nth-child(2),
 #strength-meter[data-level="4"] .strength-bar:nth-child(3),
-#strength-meter[data-level="4"] .strength-bar:nth-child(4) { background: #22c55e; }
+#strength-meter[data-level="4"] .strength-bar:nth-child(4) {
+    background: #22c55e;
+}
+
+#strength-meter[data-level="5"] .strength-bar:nth-child(1),
+#strength-meter[data-level="5"] .strength-bar:nth-child(2),
+#strength-meter[data-level="5"] .strength-bar:nth-child(3),
+#strength-meter[data-level="5"] .strength-bar:nth-child(4),
+#strength-meter[data-level="5"] .strength-bar:nth-child(5) {
+    background: #ff00ea;
+}
