@@ -25,10 +25,7 @@
                 <!-- ===== PASSPHRASE TAB ===== -->
                 <div id="tab-passphrase" class="tab-content active">
                     <div class="control-group">
-                        <p style="font-size: 0.75rem; color: var(--secondary); margin-top: 4px;">Passphrases can
-                            provide a decent level of security while being much easier to remember and
-                            use. However, if you want the maximum level of security, you should use strong passwords
-                            that include a full set of letters, numbers, and special symbols.</p>
+                        <p class="note-text">Passphrases can provide a decent level of security while being much easier to remember and use. However, if you want the maximum level of security, you should use strong passwords that include a full set of letters, numbers, and special symbols.</p>
                         <label>Wordlist</label>
                         <select id="opt-wordlist">
                             <option value="any">Any</option>
@@ -49,7 +46,7 @@
                             <button class="outline btn-sep" data-val="_">_</button>
                             <button class="outline btn-sep" data-val="-">-</button>
                             <button class="outline btn-sep" data-val=" ">space</button>
-                            <input type="text" id="opt-sep-custom" placeholder="Custom" style="width: 70px;">
+                            <input type="text" id="opt-sep-custom" class="custom-sep-input" placeholder="Custom">
                         </div>
                     </div>
 
@@ -82,7 +79,7 @@
 
                     <div class="control-group">
                         <label>Digitalizer
-                            <div style="font-size: 0.75rem; color: var(--secondary); margin-top: 4px;">
+                            <div class="note-text">
                                 Change some letters to digits: i→1 b→8 s→5 etc.
                             </div>
                         </label>
@@ -99,7 +96,7 @@
                     <div class="control-group">
                         <label>
                             Random Special Symbols
-                            <div style="font-size: 0.75rem; color: var(--secondary); margin-top: 4px;">
+                            <div class="note-text">
                                 Pool: ! ? = + @ # $ % ^ &amp; * ( ) / \ &lt; &gt; ; : [ ] { }
                             </div>
                         </label>
@@ -165,18 +162,16 @@
             <section>
                 <button type="button" id="btn-generate" class="main-action-button">🔐 Generate some passwords</button>
                 <hr>
-                <div
-                    style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; margin-bottom: 15px;">
-                    <div style="display: flex; align-items: center; gap: 15px;">
-                        <h2 style="margin:0">Results</h2>
-                        <div id="strength-meter" class="strength-meter"
-                            title="Estimated strength of the first generated password" style="display: none;">
+                <div class="toolbar-row">
+                    <div class="toolbar-group">
+                        <h2 class="section-heading">Results</h2>
+                        <div id="strength-meter" class="strength-meter" title="Estimated strength of the first generated password">
                             <div class="strength-bar" id="str-bar-1"></div>
                             <div class="strength-bar" id="str-bar-2"></div>
                             <div class="strength-bar" id="str-bar-3"></div>
                             <div class="strength-bar" id="str-bar-4"></div>
                             <div class="strength-bar" id="str-bar-5"></div>
-                            <span id="str-text" style="font-size: 0.8rem; font-weight: 600; margin-left: 5px;"></span>
+                            <span id="str-text" class="strength-text"></span>
                         </div>
                     </div>
                     <div class="row">
@@ -186,18 +181,15 @@
                     </div>
                 </div>
                 <div id="results-container" class="results-list"></div>
-                <div id="warning-box" style="color: #e11d48; font-size: 0.8rem; margin-top: 10px;" class="hidden">
+                <div id="warning-box" class="warning-box hidden">
                     Warning: Wordlist too small, words may repeat.</div>
             </section>
 
             <section class="history-pane">
-                <div
-                    style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; margin-bottom: 10px;">
-                    <div style="display: flex; align-items: center; gap: 6px;">
-                        <input type="checkbox" id="opt-save-history"
-                            style="width:15px;height:15px;accent-color:var(--primary);cursor:pointer;"
-                            title="Save history for next start">
-                        <h3 style="margin:0">Your Local History</h3>
+                <div class="toolbar-row toolbar-row--compact">
+                    <div class="toolbar-group">
+                        <input type="checkbox" id="opt-save-history" class="save-history-checkbox" title="Save history for next start">
+                        <h3 class="section-heading">Your Local History</h3>
                     </div>
                     <div class="row">
                         <button type="button" class="outline small-btn" id="btn-export-history">Export CSV</button>

@@ -137,16 +137,53 @@ button[type="button"] {
     margin-bottom: 15px;
 }
 
+.toolbar-row--compact {
+    margin-bottom: 10px;
+}
+
 .toolbar-group {
     display: flex;
     align-items: center;
     gap: 15px;
 }
 
+.strength-meter {
+    display: none;
+    gap: 8px;
+    align-items: center;
+}
+
+.strength-text {
+    font-size: 0.8rem;
+    font-weight: 600;
+    margin-left: 5px;
+}
+
 .warning-box {
     color: #e11d48;
     font-size: 0.8rem;
     margin-top: 10px;
+}
+
+.note-text {
+    font-size: 0.75rem;
+    color: var(--secondary);
+    margin-top: 4px;
+}
+
+.custom-sep-input {
+    width: 70px;
+}
+
+.section-heading {
+    margin: 0;
+}
+
+.save-history-checkbox {
+    width: 15px;
+    height: 15px;
+    accent-color: var(--primary);
+    cursor: pointer;
 }
 
 button.secondary {
