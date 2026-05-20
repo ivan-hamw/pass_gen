@@ -2,7 +2,8 @@
 
 let state = {
     activeTab: 'passphrase',
-    wordlist: 'any',
+    wordLengthMin: 0,
+    wordLengthMax: 0,
     words: 4,
     separator: ' ',
     customSep: '',
@@ -35,6 +36,9 @@ function saveState() {
         localStorage.removeItem('passgen_history');
     }
 }
+
+const WORD_LENGTH_MIN = Math.min(...MASTER_WORDS.map(w => w.length));
+const WORD_LENGTH_MAX = Math.max(...MASTER_WORDS.map(w => w.length));
 
 function loadState() {
     const saved = localStorage.getItem('passgen_state_v2');
@@ -78,6 +82,10 @@ function getRandomSymbol() {
     return SYMBOLS[getSecureInt(0, SYMBOLS.length - 1)];
 }
 
+function getSelectedWordCount(min = state.wordLengthMin, max = state.wordLengthMax) {
+    return MASTER_WORDS.filter(w => w.length >= min && w.length <= max).length;
+}
+
 function applyCap(word, mode) {
     if (mode === 'nocap') return word;
     if (mode === 'title') return word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
@@ -103,9 +111,7 @@ function applyCap(word, mode) {
 }
 
 function generatePassphrases() {
-    let pool = [...MASTER_WORDS];
-    if (state.wordlist === 'short') pool = pool.filter(w => w.length <= 4);
-    if (state.wordlist === 'long') pool = pool.filter(w => w.length >= 7);
+    let pool = MASTER_WORDS.filter(w => w.length >= state.wordLengthMin && w.length <= state.wordLengthMax);
 
     document.getElementById('warning-box').classList.toggle('hidden', pool.length >= state.words * 2);
 
@@ -377,9 +383,28 @@ function init() {
         if (el.type === 'range' || el.type === 'text' || el.type === 'number' || el.tagName === 'SELECT') el.value = val;
     };
 
-    setVal('opt-wordlist', state.wordlist);
+    const wordMinEl = getEl('opt-word-min');
+    const wordMaxEl = getEl('opt-word-max');
+    if (wordMinEl) {
+        wordMinEl.min = WORD_LENGTH_MIN;
+        wordMinEl.max = WORD_LENGTH_MAX;
+    }
+    if (wordMaxEl) {
+        wordMaxEl.min = WORD_LENGTH_MIN;
+        wordMaxEl.max = WORD_LENGTH_MAX;
+    }
+
+    if (!state.wordLengthMin || state.wordLengthMin < WORD_LENGTH_MIN || state.wordLengthMin > WORD_LENGTH_MAX) state.wordLengthMin = WORD_LENGTH_MIN;
+    if (!state.wordLengthMax || state.wordLengthMax < WORD_LENGTH_MIN || state.wordLengthMax > WORD_LENGTH_MAX) state.wordLengthMax = WORD_LENGTH_MAX;
+    if (state.wordLengthMin > state.wordLengthMax) [state.wordLengthMin, state.wordLengthMax] = [state.wordLengthMax, state.wordLengthMin];
+
+    setVal('opt-word-min', state.wordLengthMin);
+    setVal('opt-word-max', state.wordLengthMax);
+    getEl('val-wordlength-range').innerText = `${state.wordLengthMin}–${state.wordLengthMax}`;
+    getEl('val-word-count').innerText = getSelectedWordCount();
+
     setVal('opt-words', state.words);
-    document.getElementById('val-words').innerText = state.words;
+    getEl('val-words').innerText = state.words;
     setVal('opt-sep-custom', state.customSep);
 
     setVal('opt-num-pos', state.numPos);
@@ -398,7 +423,25 @@ function init() {
 
     document.querySelectorAll(`input[name="cap"][value="${state.cap}"]`).forEach(el => el.checked = true);
 
-    getEl('opt-wordlist').addEventListener('change', (e) => state.wordlist = e.target.value);
+    function updateWordLengthRange(min, max) {
+        state.wordLengthMin = min;
+        state.wordLengthMax = max;
+        getEl('opt-word-min').value = min;
+        getEl('opt-word-max').value = max;
+        getEl('val-wordlength-range').innerText = `${min}–${max}`;
+        getEl('val-word-count').innerText = getSelectedWordCount(min, max);
+    }
+
+    getEl('opt-word-min').addEventListener('input', (e) => {
+        const newMin = parseInt(e.target.value, 10);
+        const max = Math.max(newMin, state.wordLengthMax);
+        updateWordLengthRange(newMin, max);
+    });
+    getEl('opt-word-max').addEventListener('input', (e) => {
+        const newMax = parseInt(e.target.value, 10);
+        const min = Math.min(newMax, state.wordLengthMin);
+        updateWordLengthRange(min, newMax);
+    });
     getEl('opt-words').addEventListener('input', (e) => {
         state.words = parseInt(e.target.value, 10);
         getEl('val-words').innerText = state.words;

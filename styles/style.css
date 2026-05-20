@@ -78,6 +78,29 @@ section {
     gap: 8px;
 }
 
+.range-row {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.range-item {
+    flex: 1 1 140px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.range-label {
+    font-size: 0.8rem;
+    color: var(--secondary);
+}
+
+.info-text {
+    font-size: 0.85rem;
+    color: var(--secondary);
+}
+
 label {
     font-weight: 600;
     font-size: 0.9rem;
