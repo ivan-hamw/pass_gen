@@ -26,12 +26,18 @@
                 <div id="tab-passphrase" class="tab-content active">
                     <div class="control-group">
                         <p class="note-text">Passphrases can provide a decent level of security while being much easier to remember and use. However, if you want the maximum level of security, you should use strong passwords that include a full set of letters, numbers, and special symbols.</p>
-                        <label>Wordlist</label>
-                        <select id="opt-wordlist">
-                            <option value="any">Any</option>
-                            <option value="short">Short (≤4 chars)</option>
-                            <option value="long">Long (≥7 chars)</option>
-                        </select>
+                        <label>Word length range: <span id="val-wordlength-range"></span></label>
+                        <div class="range-row">
+                            <div class="range-item">
+                                <label class="range-label" for="opt-word-min">Min</label>
+                                <input type="range" id="opt-word-min" min="1" max="20" value="1">
+                            </div>
+                            <div class="range-item">
+                                <label class="range-label" for="opt-word-max">Max</label>
+                                <input type="range" id="opt-word-max" min="1" max="20" value="20">
+                            </div>
+                        </div>
+                        <span class="info-text">Selected word count: <strong id="val-word-count">0</strong></span>
                     </div>
 
                     <div class="control-group">
@@ -202,7 +208,7 @@
 
     </div>
     <footer class="app-footer">
-        <span class="footer-text">Pass&Phrase Generator v.0.17 - VibeCoded by Ivan Rieznyk</span>
+        <span class="footer-text">Pass&Phrase Generator v.0.18 - VibeCoded by Ivan Rieznyk</span>
     </footer>
     <div id="toast" class="toast" aria-live="polite"></div>
 
