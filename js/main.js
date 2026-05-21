@@ -1,5 +1,7 @@
 
 
+
+
 let state = {
     activeTab: 'passphrase',
     wordLengthMin: 0,
@@ -8,23 +10,27 @@ let state = {
     separator: ' ',
     customSep: '',
     cap: 'nocap',
-    numPos: 'off',
+    numPos: 'each',
     digits: 2,
-    symbolPos: 'off',
+    symbolPos: 'start',
     count: 5,
     theme: window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light',
     hideResults: false,
     results: [],
     history: [],
-    digitalaizer: 'off',
-    digitalaizerRatio: 0,
+    digitalaiser: 'on',
+    digitalaiserRatio: 10,
     pwLength: 16,
     pwUpper: true,
     pwLower: true,
     pwDigits: true,
     pwSymbols: true,
     pwCount: 5,
-    saveHistory: true
+    saveHistory: true,
+    enableCap: false,
+    enableNum: false,
+    enabledigitalaiser: false,
+    enableSymbols: false
 };
 
 function saveState() {
@@ -122,21 +128,26 @@ function generatePassphrases() {
         let parts = [];
         for (let j = 0; j < state.words; j++) {
             let word = pool[getSecureInt(0, pool.length - 1)];
-            word = applyCap(word, state.cap);
 
-            if (state.numPos === 'each') word += getRandomDigitString(state.digits);
-            if (state.symbolPos === 'each') word += getRandomSymbol();
+            const capMode = state.enableCap ? state.cap : 'nocap';
+            word = applyCap(word, capMode);
+
+            if (state.enableNum && state.numPos === 'each') word += getRandomDigitString(state.digits);
+            if (state.enableSymbols && state.symbolPos === 'each') word += getRandomSymbol();
 
             parts.push(word);
         }
 
         let phrase = parts.join(separator);
 
-        if (state.numPos === 'end') phrase += getRandomDigitString(state.digits);
-        if (state.symbolPos === 'start') phrase = getRandomSymbol() + phrase;
-        if (state.symbolPos === 'end') phrase = phrase + getRandomSymbol();
-
-        if (state.digitalaizer === "on") phrase = leetTransform(phrase, state.digitalaizerRatio / 100);
+        if (state.enableNum && state.numPos === 'end') phrase += getRandomDigitString(state.digits);
+        if (state.enableSymbols) {
+            if (state.symbolPos === 'start') phrase = getRandomSymbol() + phrase;
+            if (state.symbolPos === 'end') phrase = phrase + getRandomSymbol();
+        }
+        if (state.enabledigitalaiser && state.digitalaiser === "on") {
+            phrase = leetTransform(phrase, state.digitalaiserRatio / 100);
+        }
         results.push(phrase);
     }
 
@@ -376,12 +387,47 @@ function cycleTheme() {
 function init() {
     loadState();
 
+    // Migrate legacy states from 'off' to valid dropdown defaults
+    if (state.numPos === 'off') state.numPos = 'each';
+    if (state.digitalaiser === 'off') state.digitalaiser = 'on';
+    if (state.symbolPos === 'off') state.symbolPos = 'start';
+    if (state.enableCap === undefined) state.enableCap = false;
+    if (state.enableNum === undefined) state.enableNum = false;
+    if (state.enabledigitalaiser === undefined) state.enabledigitalaiser = false;
+    if (state.enableSymbols === undefined) state.enableSymbols = false;
+
     const getEl = id => document.getElementById(id);
     const setVal = (id, val) => {
         const el = getEl(id);
         if (!el) return;
         if (el.type === 'range' || el.type === 'text' || el.type === 'number' || el.tagName === 'SELECT') el.value = val;
     };
+
+    // Advanced features visibility toggle
+    const updateVisibility = (btnId, contentId, stateProp) => {
+        const checkbox = getEl(btnId);
+        const content = getEl(contentId);
+        if (checkbox) checkbox.checked = state[stateProp];
+        if (content) content.classList.toggle('hidden', !state[stateProp]);
+    };
+
+    const setupSwitch = (btnId, contentId, stateProp) => {
+        const checkbox = getEl(btnId);
+        if (checkbox) {
+            checkbox.addEventListener('change', (e) => {
+                state[stateProp] = e.target.checked;
+                updateVisibility(btnId, contentId, stateProp);
+                saveState();
+                generate();
+            });
+        }
+        updateVisibility(btnId, contentId, stateProp);
+    };
+
+    setupSwitch('opt-enable-cap', 'grp-capitalization-content', 'enableCap');
+    setupSwitch('opt-enable-num', 'grp-numbers-content', 'enableNum');
+    setupSwitch('opt-enable-digitalaiser', 'grp-digitalaiser-content', 'enabledigitalaiser');
+    setupSwitch('opt-enable-symbols', 'grp-symbols-content', 'enableSymbols');
 
     const wordMinEl = getEl('opt-word-min');
     const wordMaxEl = getEl('opt-word-max');
@@ -410,14 +456,14 @@ function init() {
     setVal('opt-num-pos', state.numPos);
     setVal('opt-digits', state.digits);
 
-    setVal('opt-digitalaizer-pos', state.digitalaizer);
-    setVal('opt-digitalaizerRatio', state.digitalaizerRatio);
+    setVal('opt-digitalaiser-pos', state.digitalaiser);
+    setVal('opt-digitalaiserRatio', state.digitalaiserRatio);
 
     document.getElementById('val-digits').innerText = state.digits;
-    document.getElementById('val-digitalaizer').innerText = state.digitalaizerRatio;
+    document.getElementById('val-digitalaiser').innerText = state.digitalaiserRatio;
 
     document.getElementById('num-digits-wrap').classList.toggle('hidden', state.numPos === 'off');
-    document.getElementById('num-digitalaizer-wrap').classList.toggle('hidden', state.digitalaizer === 'off');
+    document.getElementById('num-digitalaiser-wrap').classList.toggle('hidden', state.digitalaiser === 'off');
     setVal('opt-symbol-pos', state.symbolPos);
     setVal('opt-count', state.count);
 
@@ -469,13 +515,13 @@ function init() {
     });
 
     // digitizer
-    getEl('opt-digitalaizer-pos').addEventListener('change', (e) => {
-        state.digitalaizer = e.target.value;
-        getEl('num-digitalaizer-wrap').classList.toggle('hidden', state.digitalaizer === 'off');
+    getEl('opt-digitalaiser-pos').addEventListener('change', (e) => {
+        state.digitalaiser = e.target.value;
+        getEl('num-digitalaiser-wrap').classList.toggle('hidden', state.digitalaiser === 'off');
     });
-    getEl('opt-digitalaizerRatio').addEventListener('input', (e) => {
-        state.digitalaizerRatio = parseInt(e.target.value, 10);
-        getEl('val-digitalaizer').innerText = state.digitalaizerRatio;
+    getEl('opt-digitalaiserRatio').addEventListener('input', (e) => {
+        state.digitalaiserRatio = parseInt(e.target.value, 10);
+        getEl('val-digitalaiser').innerText = state.digitalaiserRatio;
     });
 
     getEl('opt-symbol-pos').addEventListener('change', (e) => state.symbolPos = e.target.value);

@@ -1,3 +1,33 @@
+@property --checker-bg-start {
+    syntax: '<color>';
+    inherits: false;
+    initial-value: rgb(157, 157, 157);
+}
+
+@property --checker-bg-end {
+    syntax: '<color>';
+    inherits: false;
+    initial-value: rgb(80, 80, 80);
+}
+
+@property --knob-bg-start {
+    syntax: '<color>';
+    inherits: false;
+    initial-value: #ffffff;
+}
+
+@property --knob-bg-mid {
+    syntax: '<color>';
+    inherits: false;
+    initial-value: #747474;
+}
+
+@property --knob-bg-end {
+    syntax: '<color>';
+    inherits: false;
+    initial-value: #dbdbdb;
+}
+
 :root {
     --bg: #ffffff;
     --text: #1a1a1a;
@@ -392,7 +422,7 @@ button.outline {
 .tab-content.active {
     display: flex;
     flex-direction: column;
-    gap: 16px;
+    gap: 6px;
 }
 
 /* Number input for count */
@@ -532,4 +562,227 @@ input[type="range"] {
 #strength-meter[data-level="5"] .strength-bar:nth-child(4),
 #strength-meter[data-level="5"] .strength-bar:nth-child(5) {
     background: #ff00ea;
+}
+
+/* --- CUSTOM CHECKER TOGGLE SWITCH --- */
+.checker-row {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    gap: 12px;
+    padding: 4px 0;
+    border-bottom: 1px dashed var(--border);
+    margin-bottom: 12px;
+}
+
+.checker-label {
+    font-weight: 600;
+    font-size: 0.95rem;
+}
+
+.checker-switch {
+    width: 60px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.checker-switch input[type="checkbox"] {
+    display: none;
+}
+
+.checker-button {
+    font-size: 11px;
+    font-family: Arial, Helvetica, sans-serif;
+    font-weight: 700;
+    color: #000;
+    box-shadow: inset 2px 2px 5px rgba(0, 0, 0, 0.4);
+    background: linear-gradient(135deg, var(--checker-bg-start) 0%, var(--checker-bg-end) 100%);
+    width: 60px;
+    height: 30px;
+    border-radius: 200px;
+    cursor: pointer;
+    position: relative;
+    transition: --checker-bg-start 0.5s ease, --checker-bg-end 0.5s ease;
+    display: block;
+}
+
+.checker-button::before {
+    content: "";
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    width: 26px;
+    height: 26px;
+    background: radial-gradient(farthest-corner at 6px 6px,
+            var(--knob-bg-start) 0%,
+            var(--knob-bg-mid) 50%,
+            var(--knob-bg-end) 100%);
+    border-radius: 50%;
+    transition: transform 0.4s cubic-bezier(0.25, 0.8, 0.25, 1.25),
+        --knob-bg-start 0.5s ease,
+        --knob-bg-mid 0.5s ease,
+        --knob-bg-end 0.5s ease;
+    z-index: 10;
+}
+
+.checker-switch input[type="checkbox"]:checked+.checker-button {
+    --checker-bg-start: rgba(255, 0, 151, 1);
+    --checker-bg-end: rgba(255, 118, 0, 1);
+}
+
+.checker-switch input[type="checkbox"]:checked+.checker-button::before {
+    transform: translateX(30px);
+    --knob-bg-start: #eaff00;
+    --knob-bg-mid: #ffba0c;
+    --knob-bg-end: #f1ff86;
+}
+
+.switch_labels {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 8px;
+    pointer-events: none;
+    box-sizing: border-box;
+    z-index: 5;
+}
+
+.switch_labels div {
+    font-size: 10px;
+    color: #ffffff;
+    font-weight: bold;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.6);
+}
+
+.switch_labels div:first-child {
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.switch_labels div:last-child {
+    opacity: 1;
+    transition: opacity 0.3s ease;
+}
+
+.checker-switch input[type="checkbox"]:checked+.checker-button .switch_labels div:first-child {
+    opacity: 1;
+}
+
+.checker-switch input[type="checkbox"]:checked+.checker-button .switch_labels div:last-child {
+    opacity: 0;
+}
+
+/* --- COLLAPSIBLE SECTIONS --- */
+.collapsible {
+    max-height: 250px;
+    opacity: 1;
+    overflow: visible;
+    transition: max-height 0.4s cubic-bezier(0.25, 0.8, 0.25, 1),
+        opacity 0.35s ease,
+        margin 0.35s ease,
+        padding 0.35s ease;
+}
+
+.collapsible.hidden {
+    max-height: 0 !important;
+    opacity: 0 !important;
+    margin-top: 0 !important;
+    margin-bottom: 0 !important;
+    padding-top: 0 !important;
+    padding-bottom: 0 !important;
+    border: none !important;
+    overflow: hidden !important;
+    pointer-events: none !important;
+}
+
+/* --- CHECKER LABEL GROUP & TOOLTIPS --- */
+.checker-label-group {
+    display: flex;
+    align-items: center;
+    position: relative;
+}
+
+.info-tooltip-trigger {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background-color: var(--border);
+    color: var(--secondary);
+    font-size: 11px;
+    font-weight: bold;
+    cursor: help;
+    margin-left: 6px;
+    position: relative;
+    user-select: none;
+    transition: background-color 0.2s, color 0.2s;
+    outline: none;
+}
+
+.info-tooltip-trigger:hover,
+.info-tooltip-trigger:focus {
+    background-color: var(--primary);
+    color: white;
+}
+
+/* Tooltip bubble */
+.info-tooltip-trigger::after {
+    content: attr(data-tooltip);
+    position: absolute;
+    bottom: 135%;
+    left: 50%;
+    transform: translateX(-50%) translateY(8px);
+    background-color: var(--toast-bg);
+    color: var(--toast-text);
+    padding: 8px 12px;
+    border-radius: 8px;
+    font-size: 11px;
+    font-weight: 500;
+    width: max-content;
+    max-width: 250px;
+    white-space: normal;
+    word-break: break-word;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.25);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s cubic-bezier(0.4, 0, 0.2, 1), transform 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    z-index: 100;
+    line-height: 1.4;
+    text-align: center;
+    font-family: system-ui, -apple-system, sans-serif;
+}
+
+/* Tooltip arrow */
+.info-tooltip-trigger::before {
+    content: "";
+    position: absolute;
+    bottom: 115%;
+    left: 50%;
+    transform: translateX(-50%) translateY(8px);
+    border-width: 6px;
+    border-style: solid;
+    border-color: var(--toast-bg) transparent transparent transparent;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s cubic-bezier(0.4, 0, 0.2, 1), transform 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    z-index: 100;
+}
+
+.info-tooltip-trigger:hover::after,
+.info-tooltip-trigger:focus::after {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+}
+
+.info-tooltip-trigger:hover::before,
+.info-tooltip-trigger:focus::before {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
 }

@@ -25,7 +25,9 @@
                 <!-- ===== PASSPHRASE TAB ===== -->
                 <div id="tab-passphrase" class="tab-content active">
                     <div class="control-group">
-                        <p class="note-text">Passphrases can provide a decent level of security while being much easier to remember and use. However, if you want the maximum level of security, you should use strong passwords that include a full set of letters, numbers, and special symbols.</p>
+                        <p class="note-text">Passphrases can provide a decent level of security while being much easier
+                            to remember and use. However, if you want the maximum level of security, you should use
+                            strong passwords that include a full set of letters, numbers, and special symbols.</p>
                         <label>Word length range: <span id="val-wordlength-range"></span></label>
                         <div class="range-row">
                             <div class="range-item">
@@ -56,9 +58,22 @@
                         </div>
                     </div>
 
+                    <!-- ===== PASSPHRASE EXTRAS ===== -->
+                    <!-- 1. Capitalization -->
                     <div class="control-group">
-                        <label class="group-title">Capitalization</label>
-                        <div class="radio-row">
+                        <div class="checker-row">
+                            <div class="checker-switch">
+                                <input type="checkbox" id="opt-enable-cap">
+                                <label for="opt-enable-cap" class="checker-button">
+                                    <div class="switch_labels">
+                                        <div>On</div>
+                                        <div>Off</div>
+                                    </div>
+                                </label>
+                            </div>
+                            <span class="checker-label">Capitalisation</span>
+                        </div>
+                        <div class="radio-row collapsible hidden" id="grp-capitalization-content">
                             <input type="radio" name="cap" id="cap-low" value="nocap">
                             <label for="cap-low">low</label>
                             <input type="radio" name="cap" id="cap-title" value="title" checked>
@@ -70,48 +85,90 @@
                         </div>
                     </div>
 
+                    <!-- 2. Numbers -->
                     <div class="control-group">
-                        <label>Numbers</label>
-                        <select id="opt-num-pos">
-                            <option value="off">Disabled</option>
-                            <option value="each">After each word</option>
-                            <option value="end">After last word</option>
-                        </select>
-                        <div id="num-digits-wrap" class="hidden">
-                            <label>Digits: <span id="val-digits">2</span></label>
-                            <input type="range" id="opt-digits" min="1" max="10" value="2">
+                        <div class="checker-row">
+                            <div class="checker-switch">
+                                <input type="checkbox" id="opt-enable-num">
+                                <label for="opt-enable-num" class="checker-button">
+                                    <div class="switch_labels">
+                                        <div>On</div>
+                                        <div>Off</div>
+                                    </div>
+                                </label>
+                            </div>
+                            <span class="checker-label">Numbers</span>
+                        </div>
+                        <div class="collapsible hidden" id="grp-numbers-content"
+                            style="display: flex; flex-direction: column; gap: 8px;">
+                            <select id="opt-num-pos">
+                                <option value="each">After each word</option>
+                                <option value="end">After last word</option>
+                            </select>
+                            <div id="num-digits-wrap" class="hidden">
+                                <label>Digits: <span id="val-digits">2</span></label>
+                                <input type="range" id="opt-digits" min="1" max="10" value="2">
+                            </div>
                         </div>
                     </div>
 
+                    <!-- 3. Digitalizer -->
                     <div class="control-group">
-                        <label>Digitalizer
-                            <div class="note-text">
-                                Change some letters to digits: i→1 b→8 s→5 etc.
+                        <div class="checker-row">
+                            <div class="checker-switch">
+                                <input type="checkbox" id="opt-enable-digitalaiser">
+                                <label for="opt-enable-digitalaiser" class="checker-button">
+                                    <div class="switch_labels">
+                                        <div>On</div>
+                                        <div>Off</div>
+                                    </div>
+                                </label>
                             </div>
-                        </label>
-                        <select id="opt-digitalaizer-pos">
-                            <option value="off">Disabled</option>
-                            <option value="on">Enabled</option>
-                        </select>
-                        <div id="num-digitalaizer-wrap" class="hidden">
-                            <label>%: <span id="val-digitalaizer">0</span></label>
-                            <input type="range" id="opt-digitalaizerRatio" min="10" max="100" value="10" step="10">
+                            <div class="checker-label-group">
+                                <span class="checker-label">Digitaliser</span>
+                                <span class="info-tooltip-trigger"
+                                    data-tooltip="Change letters to digits: i→1 b→8 s→5 etc." tabindex="0">?</span>
+                            </div>
+                        </div>
+                        <div class="collapsible hidden" id="grp-digitalizer-content"
+                            style="display: flex; flex-direction: column; gap: 8px;">
+                            <select id="opt-digitalaiser-pos">
+                                <option value="on">Enabled</option>
+                            </select>
+                            <div id="num-digitalaiser-wrap" class="hidden">
+                                <label>%: <span id="val-digitalaiser">10</span></label>
+                                <input type="range" id="opt-digitalaiserRatio" min="10" max="100" value="10" step="10">
+                            </div>
                         </div>
                     </div>
 
+                    <!-- 4. Special Symbols -->
                     <div class="control-group">
-                        <label>
-                            Random Special Symbols
-                            <div class="note-text">
-                                Pool: ! ? = + @ # $ % ^ &amp; * ( ) / \ &lt; &gt; ; : [ ] { }
+                        <div class="checker-row">
+                            <div class="checker-switch">
+                                <input type="checkbox" id="opt-enable-symbols">
+                                <label for="opt-enable-symbols" class="checker-button">
+                                    <div class="switch_labels">
+                                        <div>On</div>
+                                        <div>Off</div>
+                                    </div>
+                                </label>
                             </div>
-                        </label>
-                        <select id="opt-symbol-pos">
-                            <option value="off">Disabled</option>
-                            <option value="start">At the start</option>
-                            <option value="each">After each word</option>
-                            <option value="end">At the end</option>
-                        </select>
+                            <div class="checker-label-group">
+                                <span class="checker-label">Special Symbols</span>
+                                <span class="info-tooltip-trigger"
+                                    data-tooltip="! ? = + @ # $ % ^ &amp; * ( ) / \ &lt; &gt; ; : [ ] { }"
+                                    tabindex="0">?</span>
+                            </div>
+                        </div>
+                        <div class="collapsible hidden" id="grp-symbols-content"
+                            style="display: flex; flex-direction: column; gap: 8px;">
+                            <select id="opt-symbol-pos">
+                                <option value="start">At the start</option>
+                                <option value="each">After each word</option>
+                                <option value="end">At the end</option>
+                            </select>
+                        </div>
                     </div>
 
                     <div class="control-group">
@@ -171,7 +228,8 @@
                 <div class="toolbar-row">
                     <div class="toolbar-group">
                         <h2 class="section-heading">Results</h2>
-                        <div id="strength-meter" class="strength-meter" title="Estimated strength of the first generated password">
+                        <div id="strength-meter" class="strength-meter"
+                            title="Estimated strength of the first generated password">
                             <div class="strength-bar" id="str-bar-1"></div>
                             <div class="strength-bar" id="str-bar-2"></div>
                             <div class="strength-bar" id="str-bar-3"></div>
@@ -194,7 +252,8 @@
             <section class="history-pane">
                 <div class="toolbar-row toolbar-row--compact">
                     <div class="toolbar-group">
-                        <input type="checkbox" id="opt-save-history" class="save-history-checkbox" title="Save history for next start">
+                        <input type="checkbox" id="opt-save-history" class="save-history-checkbox"
+                            title="Save history for next start">
                         <h3 class="section-heading">Your Local History</h3>
                     </div>
                     <div class="row">
@@ -208,7 +267,7 @@
 
     </div>
     <footer class="app-footer">
-        <span class="footer-text">Pass&Phrase Generator v.0.18 - VibeCoded by Ivan Rieznyk</span>
+        <span class="footer-text">Pass&Phrase Generator v.0.21 - VibeCoded by Ivan Rieznyk</span>
     </footer>
     <div id="toast" class="toast" aria-live="polite"></div>
 
