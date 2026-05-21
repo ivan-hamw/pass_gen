@@ -73,15 +73,14 @@
                             </div>
                             <span class="checker-label">Capitalisation</span>
                         </div>
-                        <div class="radio-row collapsible hidden" id="grp-capitalization-content">
-                            <input type="radio" name="cap" id="cap-low" value="nocap">
-                            <label for="cap-low">low</label>
-                            <input type="radio" name="cap" id="cap-title" value="title" checked>
-                            <label for="cap-title">Title</label>
-                            <input type="radio" name="cap" id="cap-upper" value="upper">
-                            <label for="cap-upper">CAPS</label>
-                            <input type="radio" name="cap" id="cap-random" value="random">
-                            <label for="cap-random">rAndOm</label>
+                        <div class="select-row collapsible hidden" id="grp-capitalization-content">
+                            <label for="opt-cap-mode">Mode</label>
+                            <select id="opt-cap-mode">
+                                <option value="lower">lower</option>
+                                <option value="title">Title</option>
+                                <option value="upper">CAPS</option>
+                                <option value="random">rAndOm</option>
+                            </select>
                         </div>
                     </div>
 
@@ -132,9 +131,6 @@
                         </div>
                         <div class="collapsible hidden" id="grp-digitalizer-content"
                             style="display: flex; flex-direction: column; gap: 8px;">
-                            <select id="opt-digitalaiser-pos">
-                                <option value="on">Enabled</option>
-                            </select>
                             <div id="num-digitalaiser-wrap" class="hidden">
                                 <label>%: <span id="val-digitalaiser">10</span></label>
                                 <input type="range" id="opt-digitalaiserRatio" min="10" max="100" value="10" step="10">

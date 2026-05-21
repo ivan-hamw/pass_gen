@@ -9,7 +9,7 @@ let state = {
     words: 4,
     separator: ' ',
     customSep: '',
-    cap: 'nocap',
+    cap: 'lower',
     numPos: 'each',
     digits: 2,
     symbolPos: 'start',
@@ -18,7 +18,6 @@ let state = {
     hideResults: false,
     results: [],
     history: [],
-    digitalaiser: 'on',
     digitalaiserRatio: 10,
     pwLength: 16,
     pwUpper: true,
@@ -94,6 +93,7 @@ function getSelectedWordCount(min = state.wordLengthMin, max = state.wordLengthM
 
 function applyCap(word, mode) {
     if (mode === 'nocap') return word;
+    if (mode === 'lower') return word.toLowerCase();
     if (mode === 'title') return word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
     if (mode === 'upper') return word.toUpperCase();
     if (mode === 'random') {
@@ -129,7 +129,7 @@ function generatePassphrases() {
         for (let j = 0; j < state.words; j++) {
             let word = pool[getSecureInt(0, pool.length - 1)];
 
-            const capMode = state.enableCap ? state.cap : 'nocap';
+            const capMode = state.enableCap ? state.cap : 'lower';
             word = applyCap(word, capMode);
 
             if (state.enableNum && state.numPos === 'each') word += getRandomDigitString(state.digits);
@@ -145,7 +145,7 @@ function generatePassphrases() {
             if (state.symbolPos === 'start') phrase = getRandomSymbol() + phrase;
             if (state.symbolPos === 'end') phrase = phrase + getRandomSymbol();
         }
-        if (state.enabledigitalaiser && state.digitalaiser === "on") {
+        if (state.enabledigitalaiser) {
             phrase = leetTransform(phrase, state.digitalaiserRatio / 100);
         }
         results.push(phrase);
@@ -387,10 +387,10 @@ function cycleTheme() {
 function init() {
     loadState();
 
-    // Migrate legacy states from 'off' to valid dropdown defaults
+    // Migrate legacy states from older formats to current defaults
     if (state.numPos === 'off') state.numPos = 'each';
-    if (state.digitalaiser === 'off') state.digitalaiser = 'on';
     if (state.symbolPos === 'off') state.symbolPos = 'start';
+    if (state.cap === 'nocap') state.cap = 'lower';
     if (state.enableCap === undefined) state.enableCap = false;
     if (state.enableNum === undefined) state.enableNum = false;
     if (state.enabledigitalaiser === undefined) state.enabledigitalaiser = false;
@@ -426,8 +426,20 @@ function init() {
 
     setupSwitch('opt-enable-cap', 'grp-capitalization-content', 'enableCap');
     setupSwitch('opt-enable-num', 'grp-numbers-content', 'enableNum');
-    setupSwitch('opt-enable-digitalaiser', 'grp-digitalaiser-content', 'enabledigitalaiser');
+    setupSwitch('opt-enable-digitalaiser', 'grp-digitalizer-content', 'enabledigitalaiser');
     setupSwitch('opt-enable-symbols', 'grp-symbols-content', 'enableSymbols');
+
+    // Keep inner sliders in sync when checkers toggle
+    const numWrap = getEl('num-digits-wrap');
+    const digiWrap = getEl('num-digitalaiser-wrap');
+    const enableNumEl = getEl('opt-enable-num');
+    const enableDigiEl = getEl('opt-enable-digitalaiser');
+    if (enableNumEl) enableNumEl.addEventListener('change', () => {
+        if (numWrap) numWrap.classList.toggle('hidden', !(state.enableNum && state.numPos === 'each'));
+    });
+    if (enableDigiEl) enableDigiEl.addEventListener('change', () => {
+        if (digiWrap) digiWrap.classList.toggle('hidden', !state.enabledigitalaiser);
+    });
 
     const wordMinEl = getEl('opt-word-min');
     const wordMaxEl = getEl('opt-word-max');
@@ -456,18 +468,19 @@ function init() {
     setVal('opt-num-pos', state.numPos);
     setVal('opt-digits', state.digits);
 
-    setVal('opt-digitalaiser-pos', state.digitalaiser);
     setVal('opt-digitalaiserRatio', state.digitalaiserRatio);
 
     document.getElementById('val-digits').innerText = state.digits;
     document.getElementById('val-digitalaiser').innerText = state.digitalaiserRatio;
 
-    document.getElementById('num-digits-wrap').classList.toggle('hidden', state.numPos === 'off');
-    document.getElementById('num-digitalaiser-wrap').classList.toggle('hidden', state.digitalaiser === 'off');
+    // Inner control visibility: digits slider only when numbers enabled + position is 'each'
+    document.getElementById('num-digits-wrap').classList.toggle('hidden', !(state.enableNum && state.numPos === 'each'));
+    // Digitaliser ratio visible only when digitaliser checker is enabled
+    document.getElementById('num-digitalaiser-wrap').classList.toggle('hidden', !state.enabledigitalaiser);
     setVal('opt-symbol-pos', state.symbolPos);
     setVal('opt-count', state.count);
 
-    document.querySelectorAll(`input[name="cap"][value="${state.cap}"]`).forEach(el => el.checked = true);
+    setVal('opt-cap-mode', state.cap);
 
     function updateWordLengthRange(min, max) {
         state.wordLengthMin = min;
@@ -501,24 +514,19 @@ function init() {
         });
     });
     getEl('opt-sep-custom').addEventListener('input', (e) => state.customSep = e.target.value);
-    document.querySelectorAll('input[name="cap"]').forEach(el => {
-        el.addEventListener('change', (e) => state.cap = e.target.value);
-    });
+    const capSelect = getEl('opt-cap-mode');
+    if (capSelect) capSelect.addEventListener('change', (e) => state.cap = e.target.value);
 
     getEl('opt-num-pos').addEventListener('change', (e) => {
         state.numPos = e.target.value;
-        getEl('num-digits-wrap').classList.toggle('hidden', state.numPos === 'off');
+        document.getElementById('num-digits-wrap').classList.toggle('hidden', !(state.enableNum && state.numPos === 'each'));
     });
     getEl('opt-digits').addEventListener('input', (e) => {
         state.digits = parseInt(e.target.value, 10);
         getEl('val-digits').innerText = state.digits;
     });
 
-    // digitizer
-    getEl('opt-digitalaiser-pos').addEventListener('change', (e) => {
-        state.digitalaiser = e.target.value;
-        getEl('num-digitalaiser-wrap').classList.toggle('hidden', state.digitalaiser === 'off');
-    });
+    // digitizer slider handled via checker and ratio input
     getEl('opt-digitalaiserRatio').addEventListener('input', (e) => {
         state.digitalaiserRatio = parseInt(e.target.value, 10);
         getEl('val-digitalaiser').innerText = state.digitalaiserRatio;
