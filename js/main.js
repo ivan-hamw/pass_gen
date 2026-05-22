@@ -185,6 +185,7 @@ function switchTab(tab) {
     document.getElementById('tab-btn-passphrase').classList.toggle('active', tab === 'passphrase');
     document.getElementById('tab-btn-password').classList.toggle('active', tab === 'password');
     saveState();
+    generate();
 }
 
 function generatePasswords() {
@@ -495,15 +496,21 @@ function init() {
         const newMin = parseInt(e.target.value, 10);
         const max = Math.max(newMin, state.wordLengthMax);
         updateWordLengthRange(newMin, max);
+        saveState();
+        generate();
     });
     getEl('opt-word-max').addEventListener('input', (e) => {
         const newMax = parseInt(e.target.value, 10);
         const min = Math.min(newMax, state.wordLengthMin);
         updateWordLengthRange(min, newMax);
+        saveState();
+        generate();
     });
     getEl('opt-words').addEventListener('input', (e) => {
         state.words = parseInt(e.target.value, 10);
         getEl('val-words').innerText = state.words;
+        saveState();
+        generate();
     });
     document.querySelectorAll('.btn-sep').forEach(btn => {
         btn.addEventListener('click', () => {
@@ -511,47 +518,89 @@ function init() {
             state.customSep = '';
             getEl('opt-sep-custom').value = '';
             showToast(`Separator set to "${state.separator === ' ' ? 'Space' : state.separator}"`);
+            saveState();
+            generate();
         });
     });
-    getEl('opt-sep-custom').addEventListener('input', (e) => state.customSep = e.target.value);
+    getEl('opt-sep-custom').addEventListener('input', (e) => {
+        state.customSep = e.target.value;
+        saveState();
+        generate();
+    });
     const capSelect = getEl('opt-cap-mode');
-    if (capSelect) capSelect.addEventListener('change', (e) => state.cap = e.target.value);
+    if (capSelect) capSelect.addEventListener('change', (e) => {
+        state.cap = e.target.value;
+        saveState();
+        generate();
+    });
 
     getEl('opt-num-pos').addEventListener('change', (e) => {
         state.numPos = e.target.value;
         document.getElementById('num-digits-wrap').classList.toggle('hidden', !(state.enableNum && state.numPos === 'each'));
+        saveState();
+        generate();
     });
     getEl('opt-digits').addEventListener('input', (e) => {
         state.digits = parseInt(e.target.value, 10);
         getEl('val-digits').innerText = state.digits;
+        saveState();
+        generate();
     });
 
     // digitizer slider handled via checker and ratio input
     getEl('opt-digitalaiserRatio').addEventListener('input', (e) => {
         state.digitalaiserRatio = parseInt(e.target.value, 10);
         getEl('val-digitalaiser').innerText = state.digitalaiserRatio;
+        saveState();
+        generate();
     });
 
-    getEl('opt-symbol-pos').addEventListener('change', (e) => state.symbolPos = e.target.value);
+    getEl('opt-symbol-pos').addEventListener('change', (e) => {
+        state.symbolPos = e.target.value;
+        saveState();
+        generate();
+    });
     getEl('opt-count').addEventListener('input', (e) => {
         state.count = Math.max(1, parseInt(e.target.value, 10) || 1);
+        saveState();
+        generate();
     });
 
     // Password tab handlers
     getEl('opt-pw-length').addEventListener('input', (e) => {
         state.pwLength = parseInt(e.target.value, 10);
         getEl('val-pw-length').innerText = state.pwLength;
+        saveState();
+        generate();
     });
-    getEl('opt-pw-upper').addEventListener('change', (e) => state.pwUpper = e.target.checked);
-    getEl('opt-pw-lower').addEventListener('change', (e) => state.pwLower = e.target.checked);
-    getEl('opt-pw-digits').addEventListener('change', (e) => state.pwDigits = e.target.checked);
-    getEl('opt-pw-symbols').addEventListener('change', (e) => state.pwSymbols = e.target.checked);
+    getEl('opt-pw-upper').addEventListener('change', (e) => {
+        state.pwUpper = e.target.checked;
+        saveState();
+        generate();
+    });
+    getEl('opt-pw-lower').addEventListener('change', (e) => {
+        state.pwLower = e.target.checked;
+        saveState();
+        generate();
+    });
+    getEl('opt-pw-digits').addEventListener('change', (e) => {
+        state.pwDigits = e.target.checked;
+        saveState();
+        generate();
+    });
+    getEl('opt-pw-symbols').addEventListener('change', (e) => {
+        state.pwSymbols = e.target.checked;
+        saveState();
+        generate();
+    });
     getEl('opt-save-history').addEventListener('change', (e) => {
         state.saveHistory = e.target.checked;
         saveState();
     });
     getEl('opt-pw-count').addEventListener('input', (e) => {
         state.pwCount = Math.max(1, parseInt(e.target.value, 10) || 1);
+        saveState();
+        generate();
     });
     getEl('themeToggle').addEventListener('click', cycleTheme);
 
