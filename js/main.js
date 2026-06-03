@@ -134,6 +134,7 @@ function generatePassphrases() {
 
             if (state.enableNum && state.numPos === 'each') word += getRandomDigitString(state.digits);
             if (state.enableSymbols && state.symbolPos === 'each') word += getRandomSymbol();
+            if (state.enableSymbols && state.symbolPos === 'before') word = getRandomSymbol() + word;
 
             parts.push(word);
         }
@@ -241,14 +242,20 @@ function generatePasswords() {
 }
 
 // ── Strength estimation ─────────────────────────────────────────────────────
-function estimateStrength(password) {
+function estimateStrength(password, separator = null) {
     if (!password) return { level: 0, label: '' };
 
-    // Detect which pools are present in the actual string
-    const hasLower = /[a-z]/.test(password);
-    const hasUpper = /[A-Z]/.test(password);
-    const hasDigit = /[0-9]/.test(password);
-    const hasSymbol = /[^a-zA-Z0-9]/.test(password);
+    // Clean the password by removing the separator if provided
+    let cleanPassword = password;
+    if (separator) {
+        cleanPassword = password.split(separator).join('');
+    }
+
+    // Detect which pools are present in the actual clean string
+    const hasLower = /[a-z]/.test(cleanPassword);
+    const hasUpper = /[A-Z]/.test(cleanPassword);
+    const hasDigit = /[0-9]/.test(cleanPassword);
+    const hasSymbol = /[^a-zA-Z0-9]/.test(cleanPassword);
 
     let pool = 0;
     if (hasLower) pool += 26;
@@ -257,7 +264,7 @@ function estimateStrength(password) {
     if (hasSymbol) pool += 32;
     if (pool === 0) pool = 26; // fallback
 
-    const entropy = password.length * Math.log2(pool);
+    const entropy = cleanPassword.length * Math.log2(pool);
     const bits = Math.round(entropy);
 
     if (entropy < 50) return { level: 1, label: 'Weak', color: '#ef4444', bits };
@@ -277,7 +284,8 @@ function renderStrengthMeter() {
         return;
     }
 
-    const { level, label, color, bits } = estimateStrength(state.results[0]);
+    const separator = state.activeTab === 'passphrase' ? (state.customSep || state.separator) : null;
+    const { level, label, color, bits } = estimateStrength(state.results[0], separator);
     meter.setAttribute('data-level', level);
     meter.style.display = 'flex';
     text.textContent = `${label} · ${bits} bits`;
@@ -436,7 +444,7 @@ function init() {
     const enableNumEl = getEl('opt-enable-num');
     const enableDigiEl = getEl('opt-enable-digitalaiser');
     if (enableNumEl) enableNumEl.addEventListener('change', () => {
-        if (numWrap) numWrap.classList.toggle('hidden', !(state.enableNum && state.numPos === 'each'));
+        if (numWrap) numWrap.classList.toggle('hidden', !state.enableNum);
     });
     if (enableDigiEl) enableDigiEl.addEventListener('change', () => {
         if (digiWrap) digiWrap.classList.toggle('hidden', !state.enabledigitalaiser);
@@ -474,8 +482,8 @@ function init() {
     document.getElementById('val-digits').innerText = state.digits;
     document.getElementById('val-digitalaiser').innerText = state.digitalaiserRatio;
 
-    // Inner control visibility: digits slider only when numbers enabled + position is 'each'
-    document.getElementById('num-digits-wrap').classList.toggle('hidden', !(state.enableNum && state.numPos === 'each'));
+    // Inner control visibility: digits slider visible when numbers are enabled
+    document.getElementById('num-digits-wrap').classList.toggle('hidden', !state.enableNum);
     // Digitaliser ratio visible only when digitaliser checker is enabled
     document.getElementById('num-digitalaiser-wrap').classList.toggle('hidden', !state.enabledigitalaiser);
     setVal('opt-symbol-pos', state.symbolPos);
@@ -536,7 +544,6 @@ function init() {
 
     getEl('opt-num-pos').addEventListener('change', (e) => {
         state.numPos = e.target.value;
-        document.getElementById('num-digits-wrap').classList.toggle('hidden', !(state.enableNum && state.numPos === 'each'));
         saveState();
         generate();
     });
